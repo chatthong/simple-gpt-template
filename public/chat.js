@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    // Fetch and set predefined avatars for each chat
     setAvatar('Chat1');
 });
 
@@ -66,6 +67,7 @@ function addTab() {
     }
     window.conversations[tabId] = [];
 
+    // Fetch and set predefined avatars for the new chat tab
     setAvatar(tabId);
 }
 
@@ -97,11 +99,9 @@ async function sendMessage(tabId) {
 
     if (!userInput && !imageInput) return;
 
-    const conversation = [...window.conversations[tabId]];
-
     if (userInput) {
         displayMessage(tabId, userInput, 'user-message');
-        conversation.push({
+        window.conversations[tabId].push({
             role: 'user',
             content: userInput
         });
@@ -110,53 +110,40 @@ async function sendMessage(tabId) {
     document.getElementById(`user-input-${tabId}`).value = '';
 
     const formData = new FormData();
-    formData.append('conversation', JSON.stringify(conversation));
-
+    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
     if (imageInput) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const base64Image = e.target.result;
             displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
-            conversation.push({
+            window.conversations[tabId].push({
                 role: 'user',
-                content: `![Image](data:image/jpeg;base64,${base64Image})`
+                content: { type: 'image', data: base64Image }
             });
             formData.append('image', imageInput);
-            formData.set('conversation', JSON.stringify(conversation));
-            sendToServer(formData, tabId, conversation, true); // true indicates image is being sent
+            sendToServer(formData, tabId);
         };
         reader.readAsDataURL(imageInput);
     } else {
-        sendToServer(formData, tabId, conversation, false);
+        sendToServer(formData, tabId);
     }
 }
 
-async function sendToServer(formData, tabId, conversation, isImage) {
-    try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            body: formData
-        });
+async function sendToServer(formData, tabId) {
+    const response = await fetch('/api/chat', {
+        method: 'POST',
+        body: formData
+    });
 
-        const data = await response.json();
-        displayMessage(tabId, data.reply, 'bot-message');
-        
-        if (isImage) {
-            // Remove image from conversation to save tokens
-            window.conversations[tabId] = conversation.filter(msg => !msg.content.startsWith('![Image]'));
-        } else {
-            window.conversations[tabId] = conversation;
-        }
+    const data = await response.json();
+    displayMessage(tabId, data.reply, 'bot-message');
+    window.conversations[tabId].push({
+        role: 'assistant',
+        content: data.reply
+    });
 
-        window.conversations[tabId].push({
-            role: 'assistant',
-            content: data.reply
-        });
-
-        document.getElementById(`image-input-${tabId}`).value = '';
-    } catch (error) {
-        console.error('Error sending message:', error);
-    }
+    // Clear the image input after sending the message
+    document.getElementById(`image-input-${tabId}`).value = '';
 }
 
 function displayMessage(tabId, message, className) {
