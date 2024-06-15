@@ -98,6 +98,9 @@ function handleImageChange(event, tabId) {
                 role: 'user',
                 content: { type: 'image', data: base64Image }
             });
+
+            // Clear the image input after displaying the preview
+            imageInput.value = '';
         };
         reader.readAsDataURL(file);
     }
