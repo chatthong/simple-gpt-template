@@ -48,6 +48,8 @@ function addTab() {
             <div class="input-group mt-3">
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
             </div>
@@ -65,22 +67,29 @@ function addTab() {
 
 async function sendMessage(tabId) {
     const userInput = document.getElementById(`user-input-${tabId}`).value;
-    if (!userInput) return;
+    const imageInput = document.getElementById(`image-input-${tabId}`).files[0];
 
-    displayMessage(tabId, userInput, 'user-message');
-    window.conversations[tabId].push({
-        role: 'user',
-        content: userInput
-    });
+    if (!userInput && !imageInput) return;
+
+    if (userInput) {
+        displayMessage(tabId, userInput, 'user-message');
+        window.conversations[tabId].push({
+            role: 'user',
+            content: userInput
+        });
+    }
 
     document.getElementById(`user-input-${tabId}`).value = '';
 
+    const formData = new FormData();
+    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
+    if (imageInput) {
+        formData.append('image', imageInput);
+    }
+
     const response = await fetch('/api/chat', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ conversation: window.conversations[tabId] })
+        body: formData
     });
 
     const data = await response.json();
