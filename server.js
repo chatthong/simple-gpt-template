@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const axios = require('axios');
+const axios = require('axios'); // Added axios
 const { Configuration, OpenAIApi } = require('openai');
 const fs = require('fs');
 const path = require('path');
@@ -20,6 +20,19 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+
+app.get('/api/avatar/:seed', async (req, res) => {
+  const seed = req.params.seed;
+  try {
+    const response = await axios.get(`https://avatars.dicebear.com/api/fun-emoji/${seed}.svg`, {
+      responseType: 'arraybuffer'
+    });
+    res.set('Content-Type', 'image/svg+xml');
+    res.send(response.data);
+  } catch (error) {
+    res.status(500).send('Error fetching avatar');
+  }
+});
 
 app.post('/api/chat', upload.single('image'), async (req, res) => {
   console.log('Received chat request');
