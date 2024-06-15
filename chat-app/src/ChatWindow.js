@@ -60,7 +60,10 @@ const ChatWindow = ({ chat, sendMessage }) => {
           type="file"
           style={{ display: 'none' }}
           id={`image-input-${chat.id}`}
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={(e) => {
+            console.log('Image selected:', e.target.files[0]);
+            setImage(e.target.files[0]);
+          }}
         />
         <div className="input-group-append">
           <button
