@@ -25,28 +25,27 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   let botReply = "I can only respond to text messages at the moment.";
 
   try {
-    if (userMessage) {
-      let additionalContext = '';
-      
-      if (imagePath) {
-        // Create a reference to the image
-        additionalContext = ` The user also uploaded an image: ${imagePath}`;
-        // Optionally, process the image here
-        // For example, you can upload it to a storage service and get a URL
-        // fs.unlinkSync(imagePath);  // Clean up the uploaded image if needed
-      }
+    let additionalContext = '';
+    if (imagePath) {
+      const imageUrl = `http://143.198.223.202:${port}/${req.file.filename}`; // URL to access the uploaded image
+      additionalContext = ` The user also uploaded an image available at: ${imageUrl}.`;
+    }
 
-      const response = await openai.createChatCompletion({
-        model: "gpt-4",
-        messages: [{ role: 'user', content: userMessage + additionalContext }],
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      });
+    const response = await openai.createChatCompletion({
+      model: "gpt-4",
+      messages: [{ role: 'user', content: userMessage + additionalContext }],
+      temperature: 1,
+      max_tokens: 256,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
 
-      botReply = response.data.choices[0].message.content;
+    botReply = response.data.choices[0].message.content;
+
+    // Clean up the uploaded image after processing
+    if (imagePath) {
+      fs.unlinkSync(imagePath);
     }
   } catch (error) {
     console.error("Error occurred:", error.response ? error.response.data : error.message);
