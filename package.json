@@ -1,5 +1,12 @@
 {
+  "name": "simple-gpt-template",
+  "version": "1.0.0",
+  "main": "server.js",
   "dependencies": {
-    "openai": "^4.51.0"
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "multer": "^1.4.2",
+    "openai": "^3.1.0",
+    "dotenv": "^8.2.0"
   }
 }
