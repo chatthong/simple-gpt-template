@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const axios = require('axios'); // Added axios
+const axios = require('axios');
 const { Configuration, OpenAIApi } = require('openai');
 const fs = require('fs');
 const path = require('path');
@@ -79,5 +79,5 @@ app.get('*', (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running at http://143.198.223.202:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
