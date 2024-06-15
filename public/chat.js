@@ -95,7 +95,8 @@ async function sendMessage(tabId) {
     const userInput = document.getElementById(`user-input-${tabId}`).value;
     const imageInput = document.getElementById(`image-input-${tabId}`).files[0];
 
-    const formData = new FormData();
+    if (!userInput && !imageInput) return;
+
     const conversation = [...window.conversations[tabId]];
 
     if (userInput) {
@@ -108,6 +109,9 @@ async function sendMessage(tabId) {
 
     document.getElementById(`user-input-${tabId}`).value = '';
 
+    const formData = new FormData();
+    formData.append('conversation', JSON.stringify(conversation));
+
     if (imageInput) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -118,11 +122,11 @@ async function sendMessage(tabId) {
                 content: base64Image
             });
             formData.append('image', imageInput);
+            formData.append('conversation', JSON.stringify(conversation)); // Ensure conversation is included
             sendToServer(formData, tabId, conversation);
         };
         reader.readAsDataURL(imageInput);
     } else {
-        formData.append('conversation', JSON.stringify(conversation));
         sendToServer(formData, tabId, conversation);
     }
 }

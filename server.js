@@ -21,19 +21,9 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-app.get('/api/avatar/:seed', (req, res) => {
-  const seed = req.params.seed;
-  const filePath = path.resolve(`./images/${seed}.jpg`);
-  if (fs.existsSync(filePath)) {
-    res.sendFile(filePath);
-  } else {
-    res.status(404).send('Avatar not found');
-  }
-});
-
 app.post('/api/chat', upload.single('image'), async (req, res) => {
   console.log('Received chat request');
-  const conversation = JSON.parse(req.body.conversation);
+  const conversation = JSON.parse(req.body.conversation || "[]");
   const imagePath = req.file ? req.file.path : null;
   let botReply = "I can only respond to text messages at the moment.";
 
