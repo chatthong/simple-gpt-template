@@ -29,7 +29,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
     let additionalContext = '';
     if (imagePath) {
       const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
-      additionalContext = ` You also uploaded an image available at: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
+      additionalContext = ` Here is the image: ${imageUrl}.`;
     }
 
     const response = await openai.createChatCompletion({
