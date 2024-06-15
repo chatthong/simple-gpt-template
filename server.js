@@ -28,10 +28,13 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   try {
     if (imagePath) {
       const imageBuffer = fs.readFileSync(imagePath);
-      const response = await openai.createImageChat({
-        model: "gpt-4",
-        images: [{image: imageBuffer}],
-        messages: [{ role: 'user', content: userMessage }],
+      const response = await openai.createChatCompletion({
+        model: "gpt-4-vision",
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant that can understand and analyze images.' },
+          { role: 'user', content: userMessage, name: "user" },
+        ],
+        files: [{ file: imageBuffer, type: 'image/png' }]
       });
 
       botReply = response.data.choices[0].message.content;
