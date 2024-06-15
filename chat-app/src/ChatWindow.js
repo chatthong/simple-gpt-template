@@ -5,16 +5,21 @@ const ChatWindow = ({ chat, sendMessage }) => {
   const [image, setImage] = useState(null);
 
   const handleSendMessage = async () => {
+    console.log('Send button clicked');
+
     if (!inputValue.trim() && !image) {
+      console.log('No input value or image to send');
       return;
     }
 
     if (inputValue.trim()) {
+      console.log('Sending text message:', inputValue);
       sendMessage(chat.id, { type: 'text', content: inputValue });
       setInputValue('');
     }
 
     if (image) {
+      console.log('Sending image');
       const formData = new FormData();
       formData.append('conversation', JSON.stringify([{ role: 'user', content: inputValue }]));
       formData.append('image', image);
@@ -30,6 +35,7 @@ const ChatWindow = ({ chat, sendMessage }) => {
         }
 
         const data = await response.json();
+        console.log('Received response:', data);
         sendMessage(chat.id, { type: 'bot', content: data.reply });
         setImage(null);
       } catch (error) {
@@ -60,7 +66,10 @@ const ChatWindow = ({ chat, sendMessage }) => {
           type="file"
           style={{ display: 'none' }}
           id={`image-input-${chat.id}`}
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={(e) => {
+            console.log('Image selected:', e.target.files[0]);
+            setImage(e.target.files[0]);
+          }}
         />
         <div className="input-group-append">
           <button
