@@ -118,7 +118,7 @@ async function sendMessage(tabId) {
             displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
             window.conversations[tabId].push({
                 role: 'user',
-                content: { type: 'image', data: base64Image }
+                content: base64Image // Use base64Image string directly
             });
             formData.append('image', imageInput);
             sendToServer(formData, tabId);
