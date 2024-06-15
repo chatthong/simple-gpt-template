@@ -21,31 +21,28 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 app.post('/api/chat', upload.single('image'), async (req, res) => {
-  const userMessage = req.body.message;
+  const conversation = req.body.conversation;
   const imagePath = req.file ? req.file.path : null;
   let botReply = "I can only respond to text messages at the moment.";
 
   try {
-    let messages = [
-      {
+    if (imagePath) {
+      const imageData = fs.readFileSync(imagePath, { encoding: 'base64' });
+      const base64Image = `data:image/jpeg;base64,${imageData}`;
+      conversation.push({
         role: "user",
         content: [
           {
             type: "text",
-            text: userMessage
+            text: "Here is the image"
+          },
+          {
+            type: "image_url",
+            image_url: {
+              url: base64Image
+            }
           }
         ]
-      }
-    ];
-
-    if (imagePath) {
-      const imageData = fs.readFileSync(imagePath, { encoding: 'base64' });
-      const base64Image = `data:image/jpeg;base64,${imageData}`;
-      messages[0].content.push({
-        type: "image_url",
-        image_url: {
-          url: base64Image
-        }
       });
 
       fs.unlinkSync(imagePath);
@@ -53,7 +50,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 
     const response = await openai.createChatCompletion({
       model: "gpt-4o",
-      messages: messages,
+      messages: conversation,
       max_tokens: 1000,
       temperature: 1,
       top_p: 1,
