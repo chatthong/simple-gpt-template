@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const { exec } = require('child_process');
+const axios = require('axios');
 const { Configuration, OpenAIApi } = require('openai');
 const fs = require('fs');
 const path = require('path');
@@ -21,23 +21,31 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-app.get('/api/avatar/:seed', (req, res) => {
+app.get('/api/avatar/:seed', async (req, res) => {
   const seed = req.params.seed;
   const filePath = path.resolve(`./avatars/${seed}.svg`);
-  
-  // Check if the file already exists
+
   if (fs.existsSync(filePath)) {
     return res.sendFile(filePath);
   }
 
-  // Generate the avatar
-  exec(`dicebear avatar --style fun-emoji --seed ${seed} --output ${filePath}`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return res.status(500).send('Error generating avatar');
-    }
-    res.sendFile(filePath);
-  });
+  try {
+    const response = await axios.get(`https://avatars.dicebear.com/api/fun-emoji/${seed}.svg`, {
+      responseType: 'stream'
+    });
+
+    response.data.pipe(fs.createWriteStream(filePath))
+      .on('finish', () => {
+        res.sendFile(filePath);
+      })
+      .on('error', (error) => {
+        console.error(error);
+        res.status(500).send('Error generating avatar');
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching avatar');
+  }
 });
 
 app.post('/api/chat', upload.single('image'), async (req, res) => {
