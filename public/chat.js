@@ -119,7 +119,7 @@ async function sendMessage(tabId) {
             displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
             conversation.push({
                 role: 'user',
-                content: base64Image
+                content: `![Image](data:image/jpeg;base64,${base64Image})`
             });
             formData.append('image', imageInput);
             formData.set('conversation', JSON.stringify(conversation)); // Ensure conversation is included

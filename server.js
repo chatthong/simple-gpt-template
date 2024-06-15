@@ -23,7 +23,14 @@ const openai = new OpenAIApi(configuration);
 
 app.post('/api/chat', upload.single('image'), async (req, res) => {
   console.log('Received chat request');
-  const conversation = JSON.parse(req.body.conversation || "[]");
+  let conversation = [];
+  try {
+    conversation = JSON.parse(req.body.conversation);
+  } catch (error) {
+    console.error('Error parsing conversation JSON:', error);
+    return res.status(400).send('Invalid conversation format');
+  }
+
   const imagePath = req.file ? req.file.path : null;
   let botReply = "I can only respond to text messages at the moment.";
 
@@ -33,18 +40,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
       const base64Image = `data:image/jpeg;base64,${imageData}`;
       conversation.push({
         role: "user",
-        content: [
-          {
-            type: "text",
-            text: "Here is the image"
-          },
-          {
-            type: "image_url",
-            image_url: {
-              url: base64Image
-            }
-          }
-        ]
+        content: `![Image](data:image/jpeg;base64,${base64Image})`
       });
 
       fs.unlinkSync(imagePath);
