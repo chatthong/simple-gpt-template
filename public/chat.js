@@ -47,7 +47,4 @@ function displayImage(imageSrc, className) {
   const chatContainer = document.getElementById('chat-container');
   const imageElement = document.createElement('img');
   imageElement.className = `chat-message ${className}`;
-  imageElement.src = imageSrc;
-  chatContainer.appendChild(imageElement);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
+  im

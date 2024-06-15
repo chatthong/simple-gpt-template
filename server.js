@@ -43,8 +43,9 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
     // Optionally, handle image input here
     if (imagePath) {
       const image = fs.readFileSync(imagePath, { encoding: 'base64' });
-      // Process the image as needed, for example, you could integrate it with another AI model that supports image processing.
-      // Remove the uploaded image after processing to clean up
+      // Here you can integrate the image with an AI model that supports image processing.
+      // Example: If using a model that supports images, you'd send the image data accordingly.
+      // After processing, clean up the uploaded image.
       fs.unlinkSync(imagePath);
     }
   } catch (error) {
@@ -57,4 +58,3 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${port}`);
-});
