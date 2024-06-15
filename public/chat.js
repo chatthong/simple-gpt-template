@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch and set predefined avatars for each chat
     setAvatar('Chat1');
+
+    // Enable Enter key to send messages
+    document.getElementById('user-input-Chat1').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage('Chat1');
+            event.preventDefault();
+        }
+    });
 });
 
 function openTab(tabId) {
@@ -16,6 +24,15 @@ function openTab(tabId) {
         tabcontent[i].classList.remove('active');
     }
     document.getElementById(tabId).classList.add('active');
+
+    // Enable Enter key to send messages
+    const userInput = document.getElementById(`user-input-${tabId}`);
+    userInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage(tabId);
+            event.preventDefault();
+        }
+    });
 }
 
 let tabCount = 1;
@@ -53,7 +70,6 @@ function addTab() {
                     <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange(event, '${tabId}')">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
-                <div id="image-preview-${tabId}" class="mt-2"></div>
             </div>
         </div>
     `;
@@ -72,18 +88,16 @@ function addTab() {
 
 function handleImageChange(event, tabId) {
     const imageInput = event.target;
-    const previewContainer = document.getElementById(`image-preview-${tabId}`);
-    previewContainer.innerHTML = '';
-
     if (imageInput.files.length > 0) {
         const file = imageInput.files[0];
         const reader = new FileReader();
         reader.onload = function(e) {
-            const imgElement = document.createElement('img');
-            imgElement.src = e.target.result;
-            imgElement.className = 'img-thumbnail';
-            imgElement.style.maxWidth = '100px';  // Adjust as needed
-            previewContainer.appendChild(imgElement);
+            const base64Image = e.target.result;
+            displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
+            window.conversations[tabId].push({
+                role: 'user',
+                content: { type: 'image', data: base64Image }
+            });
         };
         reader.readAsDataURL(file);
     }
@@ -155,7 +169,6 @@ async function sendToServer(formData, tabId) {
 
     // Clear the image input after sending the message
     document.getElementById(`image-input-${tabId}`).value = '';
-    document.getElementById(`image-preview-${tabId}`).innerHTML = '';
 }
 
 function displayMessage(tabId, message, className) {
@@ -172,10 +185,11 @@ function displayMessage(tabId, message, className) {
 
 // Function to update last message preview
 function updateLastMessagePreview(tabId, message) {
-    const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
+    const previewText = typeof message === 'string' ? message : 'Image';
+    const truncatedPreviewText = previewText.length > 20 ? previewText.substring(0, 20) + '...' : previewText;
     const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"] small`);
     if (chatItem) {
-        chatItem.textContent = previewText;
+        chatItem.textContent = truncatedPreviewText;
     }
 }
 
