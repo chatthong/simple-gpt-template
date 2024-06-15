@@ -84,9 +84,24 @@ async function sendMessage(tabId) {
     const formData = new FormData();
     formData.append('conversation', JSON.stringify(window.conversations[tabId]));
     if (imageInput) {
-        formData.append('image', imageInput);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Image = e.target.result;
+            displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
+            window.conversations[tabId].push({
+                role: 'user',
+                content: { type: 'image', data: base64Image }
+            });
+            formData.append('image', imageInput);
+            sendToServer(formData, tabId);
+        };
+        reader.readAsDataURL(imageInput);
+    } else {
+        sendToServer(formData, tabId);
     }
+}
 
+async function sendToServer(formData, tabId) {
     const response = await fetch('/api/chat', {
         method: 'POST',
         body: formData
@@ -104,7 +119,7 @@ function displayMessage(tabId, message, className) {
     const chatContainer = document.getElementById(`messages-${tabId}`);
     const messageElement = document.createElement('div');
     messageElement.className = `chat-message ${className}`;
-    messageElement.textContent = message;
+    messageElement.innerHTML = message;
     chatContainer.appendChild(messageElement);
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
