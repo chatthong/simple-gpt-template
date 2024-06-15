@@ -28,18 +28,29 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   try {
     if (imagePath) {
       const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
-      const userPrompt = `${userMessage}. Here is the image: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
-
-      const response = await openai.createChatCompletion({
+      const data = {
         model: "gpt-4",
-        messages: [{ role: 'user', content: userPrompt }],
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      });
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: userMessage
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: imageUrl
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 1000
+      };
 
+      const response = await openai.createChatCompletion(data);
       botReply = response.data.choices[0].message.content;
 
       fs.unlinkSync(imagePath);
@@ -48,7 +59,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         model: "gpt-4",
         messages: [{ role: 'user', content: userMessage }],
         temperature: 1,
-        max_tokens: 2000,
+        max_tokens: 256,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
