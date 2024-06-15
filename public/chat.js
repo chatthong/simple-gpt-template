@@ -154,14 +154,25 @@ function displayMessage(tabId, message, className) {
     messageElement.innerHTML = message;
     chatContainer.appendChild(messageElement);
     chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // Update last message preview
+    updateLastMessagePreview(tabId, message);
 }
 
-function closeChat(chatId) {
-    const chatTab = document.getElementById(chatId);
+// Function to update last message preview
+function updateLastMessagePreview(tabId, message) {
+    const chatItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"] small`);
+    if (chatItem) {
+        chatItem.textContent = message;
+    }
+}
+
+function closeChat(tabId) {
+    const chatTab = document.getElementById(tabId);
     if (chatTab) {
         chatTab.remove();
     }
-    const chatListItem = document.querySelector(`li[onclick="openTab('${chatId}')"]`);
+    const chatListItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"]`);
     if (chatListItem) {
         chatListItem.remove();
     }
