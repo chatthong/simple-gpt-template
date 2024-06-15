@@ -1,0 +1,56 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.chat-list {
+    background-color: #343a40;
+    color: white;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.chat-list h5 {
+    color: white;
+}
+
+.chat-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.chat-item:hover {
+    background-color: #495057;
+}
+
+.chat-window {
+    height: 100vh;
+    overflow-y: auto;
+    border-left: 1px solid #ccc;
+    background-color: white;
+}
+
+.tabcontent {
+    display: none;
+}
+
+.tabcontent.active {
+    display: block;
+}
+
+.chat-content {
+    height: 80vh;
+    overflow-y: auto;
+}
+
+.chat-message {
+    margin-bottom: 15px;
+}
+
+.user-message {
+    text-align: right;
+}
+
+.bot-message {
+    text-align: left;
+}

@@ -1,132 +1,101 @@
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('defaultOpen').click();
-  if (!window.conversations) {
-    window.conversations = {
-      Chat1: []
-    };
-  }
+    openTab('Chat1');
+    if (!window.conversations) {
+        window.conversations = {
+            Chat1: []
+        };
+    }
 });
 
-async function sendMessage(tabId) {
-  const userInput = document.getElementById(`user-input-${tabId}`).value;
-  const imageInput = document.getElementById(`image-input-${tabId}`).files[0];
-
-  if (!userInput && !imageInput) return;
-
-  if (userInput) {
-    displayMessage(tabId, userInput, 'user-message');
-    window.conversations[tabId].push({
-      role: 'user',
-      content: [
-        {
-          type: "text",
-          text: userInput
-        }
-      ]
-    });
-  }
-
-  if (imageInput) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      displayImage(tabId, e.target.result, 'user-message');
-    };
-    reader.readAsDataURL(imageInput);
-  }
-
-  document.getElementById(`user-input-${tabId}`).value = '';
-  document.getElementById(`image-input-${tabId}`).value = '';
-
-  const formData = new FormData();
-  formData.append('conversation', JSON.stringify(window.conversations[tabId]));
-  if (imageInput) {
-    formData.append('image', imageInput);
-  }
-
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    body: formData
-  });
-
-  const data = await response.json();
-  displayMessage(tabId, data.reply, 'bot-message');
-  window.conversations[tabId].push({
-    role: 'assistant',
-    content: [
-      {
-        type: "text",
-        text: data.reply
-      }
-    ]
-  });
-}
-
-function displayMessage(tabId, message, className) {
-  const chatContainer = document.getElementById(`messages-${tabId}`);
-  const messageElement = document.createElement('div');
-  messageElement.className = `chat-message ${className}`;
-  messageElement.textContent = message;
-  chatContainer.appendChild(messageElement);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-function displayImage(tabId, imageSrc, className) {
-  const chatContainer = document.getElementById(`messages-${tabId}`);
-  const imageElement = document.createElement('img');
-  imageElement.className = `chat-message ${className}`;
-  imageElement.src = imageSrc;
-  chatContainer.appendChild(imageElement);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-function openTab(evt, tabName) {
-  const tabcontent = document.getElementsByClassName('tabcontent');
-  for (let i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = 'none';
-  }
-
-  const tablinks = document.getElementsByClassName('tablinks');
-  for (let i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(' active', '');
-  }
-
-  document.getElementById(tabName).style.display = 'block';
-  evt.currentTarget.className += ' active';
+function openTab(tabId) {
+    const tabcontent = document.getElementsByClassName('tabcontent');
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove('active');
+    }
+    document.getElementById(tabId).classList.add('active');
 }
 
 let tabCount = 1;
 
 function addTab() {
-  tabCount++;
-  const tabId = `Chat${tabCount}`;
+    tabCount++;
+    const tabId = `Chat${tabCount}`;
 
-  const newTabButton = document.createElement('button');
-  newTabButton.className = 'tablinks';
-  newTabButton.textContent = `Chat ${tabCount}`;
-  newTabButton.onclick = function(event) {
-    openTab(event, tabId);
-  };
+    const newTabButton = document.createElement('li');
+    newTabButton.className = 'chat-item';
+    newTabButton.onclick = function() {
+        openTab(tabId);
+    };
+    newTabButton.innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="ml-3">
+                <h6 class="mb-0">Chat #${tabCount}</h6>
+                <small>Last message preview...</small>
+            </div>
+        </div>
+    `;
 
-  const tabs = document.getElementById('tabs');
-  tabs.insertBefore(newTabButton, tabs.lastElementChild);
+    const tabs = document.getElementById('chatTabs');
+    tabs.appendChild(newTabButton);
 
-  const newTabContent = document.createElement('div');
-  newTabContent.id = tabId;
-  newTabContent.className = 'tabcontent';
-  newTabContent.innerHTML = `
-    <div id="chat-container-${tabId}" class="chat-container">
-        <input type="text" id="user-input-${tabId}" placeholder="Type your message here">
-        <input type="file" id="image-input-${tabId}" accept="image/*">
-        <button id="send-button-${tabId}" onclick="sendMessage('${tabId}')">Send</button>
-        <div id="messages-${tabId}"></div>
-    </div>
-  `;
+    const newTabContent = document.createElement('div');
+    newTabContent.id = tabId;
+    newTabContent.className = 'tabcontent';
+    newTabContent.innerHTML = `
+        <div class="p-3">
+            <h5>Chat #${tabCount}</h5>
+            <div class="chat-content" id="messages-${tabId}"></div>
+            <div class="input-group mt-3">
+                <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
+                </div>
+            </div>
+        </div>
+    `;
 
-  document.body.appendChild(newTabContent);
-  newTabButton.click();
+    document.querySelector('.chat-window').appendChild(newTabContent);
+    openTab(tabId);
 
-  if (!window.conversations) {
-    window.conversations = {};
-  }
-  window.conversations[tabId] = [];
+    if (!window.conversations) {
+        window.conversations = {};
+    }
+    window.conversations[tabId] = [];
+}
+
+async function sendMessage(tabId) {
+    const userInput = document.getElementById(`user-input-${tabId}`).value;
+    if (!userInput) return;
+
+    displayMessage(tabId, userInput, 'user-message');
+    window.conversations[tabId].push({
+        role: 'user',
+        content: userInput
+    });
+
+    document.getElementById(`user-input-${tabId}`).value = '';
+
+    const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ conversation: window.conversations[tabId] })
+    });
+
+    const data = await response.json();
+    displayMessage(tabId, data.reply, 'bot-message');
+    window.conversations[tabId].push({
+        role: 'assistant',
+        content: data.reply
+    });
+}
+
+function displayMessage(tabId, message, className) {
+    const chatContainer = document.getElementById(`messages-${tabId}`);
+    const messageElement = document.createElement('div');
+    messageElement.className = `chat-message ${className}`;
+    messageElement.textContent = message;
+    chatContainer.appendChild(messageElement);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
 }

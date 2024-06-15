@@ -3,54 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with OpenAI</title>
-    <style>
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-        }
-
-        .tab button {
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-        }
-
-        .tab button:hover {
-            background-color: #ddd;
-        }
-
-        .tab button.active {
-            background-color: #ccc;
-        }
-
-        .tabcontent {
-            display: none;
-            padding: 6px 12px;
-            border-top: none;
-        }
-    </style>
+    <title>Employee Chat Bot Interface</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="tab" id="tabs">
-        <button class="tablinks" onclick="openTab(event, 'Chat1')" id="defaultOpen">Chat 1</button>
-        <button class="tablinks" onclick="addTab()">+</button>
-    </div>
-
-    <div id="Chat1" class="tabcontent">
-        <div id="chat-container-Chat1" class="chat-container">
-            <input type="text" id="user-input-Chat1" placeholder="Type your message here">
-            <input type="file" id="image-input-Chat1" accept="image/*">
-            <button id="send-button-Chat1" onclick="sendMessage('Chat1')">Send</button>
-            <div id="messages-Chat1"></div>
+    <div class="container-fluid">
+        <div class="row no-gutters">
+            <div class="col-3 chat-list">
+                <div class="p-3">
+                    <h5>Chat Sessions</h5>
+                    <ul class="list-unstyled" id="chatTabs">
+                        <li class="chat-item" onclick="openTab('Chat1')" id="defaultTab">
+                            <div class="d-flex align-items-center">
+                                <div class="ml-3">
+                                    <h6 class="mb-0">Chat #1</h6>
+                                    <small>Last message preview...</small>
+                                </div>
+                            </div>
+                        </li>
+                        <!-- More chat items will be dynamically added here -->
+                    </ul>
+                    <button class="btn btn-secondary mt-3" onclick="addTab()">New Chat</button>
+                </div>
+            </div>
+            <div class="col-9 chat-window">
+                <div class="p-3 tabcontent" id="Chat1">
+                    <h5>Chat #1</h5>
+                    <div class="chat-content" id="messages-Chat1">
+                        <!-- Chat messages will be dynamically added here -->
+                    </div>
+                    <div class="input-group mt-3">
+                        <input type="text" class="form-control" id="user-input-Chat1" placeholder="Type something...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" onclick="sendMessage('Chat1')" type="button">Send</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- More chat windows will be dynamically added here -->
+            </div>
         </div>
     </div>
-
     <script src="chat.js"></script>
 </body>
 </html>
