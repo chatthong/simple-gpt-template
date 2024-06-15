@@ -73,8 +73,8 @@ function addTab() {
 
 async function setRandomAvatar(tabId) {
     try {
-        const response = await axios.get('https://avatars.dicebear.com/api/human/random.svg');
-        const avatarUrl = response.config.url;
+        const response = await fetch('https://avatars.dicebear.com/api/fun-emoji/:seed.svg');
+        const avatarUrl = response.url;
         const chatItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"] .ml-3`);
         chatItem.innerHTML = `
             <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
