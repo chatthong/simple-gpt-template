@@ -23,13 +23,12 @@ const openai = new OpenAIApi(configuration);
 
 app.get('/api/avatar/:seed', (req, res) => {
   const seed = req.params.seed;
-  exec(`dicebear avatar --seed ${seed} --style fun-emoji`, (error, stdout, stderr) => {
+  exec(`dicebear avatar fun-emoji --seed ${seed} --output ./avatars/${seed}.svg`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       return res.status(500).send('Error generating avatar');
     }
-    res.set('Content-Type', 'image/svg+xml');
-    res.send(stdout);
+    res.sendFile(path.resolve(`./avatars/${seed}.svg`));
   });
 });
 
