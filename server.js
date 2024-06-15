@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const { Configuration, OpenAIApi } = require('openai');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -38,10 +39,14 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 
       botReply = response.data.choices[0].message.content;
     }
+
     // Optionally, handle image input here
-    // if (imagePath) {
-    //   // Process the image as needed
-    // }
+    if (imagePath) {
+      const image = fs.readFileSync(imagePath, { encoding: 'base64' });
+      // Process the image as needed, for example, you could integrate it with another AI model that supports image processing.
+      // Remove the uploaded image after processing to clean up
+      fs.unlinkSync(imagePath);
+    }
   } catch (error) {
     console.error("Error occurred:", error.response ? error.response.data : error.message);
     botReply = 'An error occurred while processing your request.';

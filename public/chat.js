@@ -1,4 +1,3 @@
-
 async function sendMessage() {
   const userInput = document.getElementById('user-input').value;
   const imageInput = document.getElementById('image-input').files[0];
