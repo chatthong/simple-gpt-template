@@ -56,7 +56,7 @@ body {
 }
 
 .img-thumbnail {
-    max-width: 15%;
+    max-width: 20%;
     height: auto;
 }
 
@@ -64,5 +64,11 @@ body {
     width: 30px;
     height: 30px;
     border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Add additional styling if necessary */
+.close-chat {
+    margin-left: auto;
     margin-right: 10px;
 }

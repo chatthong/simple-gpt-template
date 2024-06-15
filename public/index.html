@@ -13,17 +13,19 @@
             <div class="col-12 col-md-3 chat-list">
                 <div class="p-3">
                     <h5>Chat Sessions</h5>
-                    <ul class="list-unstyled" id="chatTabs">
-                        <li class="chat-item" onclick="openTab('Chat1')" id="defaultTab">
-                            <div class="d-flex align-items-center">
-                                <div class="ml-3">
-                                    <h6 class="mb-0">Chat #1</h6>
-                                    <small>Last message preview...</small>
+                        <ul class="list-unstyled" id="chatTabs">
+                            <li class="chat-item" onclick="openTab('Chat1')" id="defaultTab">
+                                <div class="d-flex align-items-center">
+                                    <div class="ml-3">
+                                        <h6 class="mb-0">Chat #1</h6>
+                                        <small>Last message preview...</small>
+                                    </div>
+                                    <button class="btn btn-danger btn-sm close-chat">X</button>
                                 </div>
-                            </div>
-                        </li>
-                        <!-- More chat items will be dynamically added here -->
-                    </ul>
+                            </li>
+                            <!-- More chat items will be dynamically added here -->
+                        </ul>
+
                     <button class="btn btn-secondary mt-3" onclick="addTab()">New Chat</button>
                 </div>
             </div>
