@@ -26,12 +26,11 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   let botReply = "I can only respond to text messages at the moment.";
 
   try {
-    let additionalContext = '';
     if (imagePath) {
       const imageBuffer = fs.readFileSync(imagePath);
-      const response = await openai.createImageChatCompletion({
-        model: "gpt-4-vision",
-        images: [imageBuffer],
+      const response = await openai.createImageChat({
+        model: "gpt-4",
+        images: [{image: imageBuffer}],
         messages: [{ role: 'user', content: userMessage }],
       });
 
@@ -53,7 +52,10 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
       botReply = response.data.choices[0].message.content;
     }
   } catch (error) {
-    console.error("Error occurred:", error.response ? error.response.data : error.message);
+    console.error("Error occurred:", error);
+    if (error.response) {
+      console.error("API response error:", error.response.data);
+    }
     botReply = 'An error occurred while processing your request.';
   }
 
