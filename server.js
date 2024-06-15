@@ -1,62 +1,46 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require('multer');
 const { Configuration, OpenAIApi } = require('openai');
-const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-const upload = multer({ dest: 'uploads/' });
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-app.post('/api/chat', upload.single('image'), async (req, res) => {
+app.post('/api/chat', async (req, res) => {
   const userMessage = req.body.message;
-  const imagePath = req.file ? req.file.path : null;
+  const imageUrl = req.body.imageUrl;
+
   let botReply = "I can only respond to text messages at the moment.";
 
   try {
-    if (imagePath) {
-      const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
-      const userPrompt = `${userMessage}. Here is the image: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
+    const response = await openai.createChatCompletion({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: userMessage },
+            {
+              type: "image_url",
+              image_url: {
+                url: imageUrl,
+                detail: "low",
+              },
+            },
+          ],
+        },
+      ],
+    });
 
-      const response = await openai.createChatCompletion({
-        model: "gpt-4",
-        messages: [{ role: 'user', content: userPrompt }],
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      });
-
-      botReply = response.data.choices[0].message.content;
-
-      // Clean up the uploaded image after processing
-      fs.unlinkSync(imagePath);
-    } else {
-      const response = await openai.createChatCompletion({
-        model: "gpt-4",
-        messages: [{ role: 'user', content: userMessage }],
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      });
-
-      botReply = response.data.choices[0].message.content;
-    }
+    botReply = response.data.choices[0].message.content;
   } catch (error) {
     console.error("Error occurred:", error);
     if (error.response) {
