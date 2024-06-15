@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('send-button').addEventListener('click', sendMessage);
+  document.getElementById('defaultOpen').click();
   if (!window.conversations) {
     window.conversations = {
       Chat1: []
@@ -117,7 +117,7 @@ function addTab() {
     <div id="chat-container-${tabId}" class="chat-container">
         <input type="text" id="user-input-${tabId}" placeholder="Type your message here">
         <input type="file" id="image-input-${tabId}" accept="image/*">
-        <button onclick="sendMessage('${tabId}')">Send</button>
+        <button id="send-button-${tabId}" onclick="sendMessage('${tabId}')">Send</button>
         <div id="messages-${tabId}"></div>
     </div>
   `;
