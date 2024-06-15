@@ -26,12 +26,9 @@ function addTab() {
 
     const newTabButton = document.createElement('li');
     newTabButton.className = 'chat-item';
-    newTabButton.onclick = function() {
-        openTab(tabId);
-    };
     newTabButton.innerHTML = `
         <div class="d-flex align-items-center">
-            <div class="ml-3">
+            <div class="ml-3" onclick="openTab('${tabId}')">
                 <h6 class="mb-0">Chat #${tabCount}</h6>
                 <small>Last message preview...</small>
             </div>
@@ -84,7 +81,7 @@ function handleImageChange(tabId) {
 async function setAvatar(tabId) {
     try {
         const avatarUrl = `/images/1.jpg`;
-        const chatItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"] .ml-3`);
+        const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`);
         chatItem.innerHTML = `
             <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
             ${chatItem.innerHTML}
@@ -161,7 +158,7 @@ function displayMessage(tabId, message, className) {
 
 // Function to update last message preview
 function updateLastMessagePreview(tabId, message) {
-    const chatItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"] small`);
+    const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"] small`);
     if (chatItem) {
         chatItem.textContent = message;
     }
@@ -172,7 +169,7 @@ function closeChat(tabId) {
     if (chatTab) {
         chatTab.remove();
     }
-    const chatListItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"]`);
+    const chatListItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`).parentElement;
     if (chatListItem) {
         chatListItem.remove();
     }
