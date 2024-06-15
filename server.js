@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const { Configuration, OpenAIApi } = require('openai');
+const path = require('path');
 const fs = require('fs');
 
 const app = express();
@@ -10,6 +11,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -24,27 +26,36 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   let botReply = "I can only respond to text messages at the moment.";
 
   try {
-    let userPrompt = userMessage;
-
     if (imagePath) {
-      const imageData = fs.readFileSync(imagePath, { encoding: 'base64' });
-      const base64Image = `data:image/jpeg;base64,${imageData}`;
-      userPrompt += `. Here is the image: ${base64Image}. Please describe the image in detail so I can assist you better.`;
+      const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
+      const userPrompt = `${userMessage}. Here is the image: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
+
+      const response = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: [{ role: 'user', content: userPrompt }],
+        temperature: 1,
+        max_tokens: 256,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+
+      botReply = response.data.choices[0].message.content;
 
       fs.unlinkSync(imagePath);
+    } else {
+      const response = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: [{ role: 'user', content: userMessage }],
+        temperature: 1,
+        max_tokens: 2000,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+
+      botReply = response.data.choices[0].message.content;
     }
-
-    const response = await openai.createChatCompletion({
-      model: "gpt-4o",
-      messages: [{ role: 'user', content: userPrompt }],
-      temperature: 1,
-      max_tokens: 2000,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
-
-    botReply = response.data.choices[0].message.content;
   } catch (error) {
     console.error("Error occurred:", error);
     if (error.response) {
