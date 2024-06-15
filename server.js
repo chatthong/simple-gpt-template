@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -68,6 +68,12 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   }
 
   res.json({ reply: botReply });
+});
+
+// Serve the React app
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {
