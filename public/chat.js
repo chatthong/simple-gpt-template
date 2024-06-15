@@ -52,7 +52,7 @@ function addTab() {
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
-                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;">
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange('${tabId}')">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
             </div>
@@ -71,9 +71,18 @@ function addTab() {
     setAvatar(tabId);
 }
 
+function handleImageChange(tabId) {
+    const imageInput = document.getElementById(`image-input-${tabId}`);
+    if (imageInput.files.length > 0) {
+        // Image selected
+    } else {
+        // Image cleared
+    }
+}
+
 async function setAvatar(tabId) {
     try {
-        const avatarUrl = `/images/1.jpg`; // Change this to the correct path of your predefined avatar image
+        const avatarUrl = `/images/1.jpg`;
         const chatItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"] .ml-3`);
         chatItem.innerHTML = `
             <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
@@ -132,6 +141,9 @@ async function sendToServer(formData, tabId) {
         role: 'assistant',
         content: data.reply
     });
+
+    // Clear the image input after sending the message
+    document.getElementById(`image-input-${tabId}`).value = '';
 }
 
 function displayMessage(tabId, message, className) {
