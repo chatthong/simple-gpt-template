@@ -158,9 +158,10 @@ function displayMessage(tabId, message, className) {
 
 // Function to update last message preview
 function updateLastMessagePreview(tabId, message) {
+    const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
     const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"] small`);
     if (chatItem) {
-        chatItem.textContent = message;
+        chatItem.textContent = previewText;
     }
 }
 
@@ -169,7 +170,7 @@ function closeChat(tabId) {
     if (chatTab) {
         chatTab.remove();
     }
-    const chatListItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`).parentElement;
+    const chatListItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`).parentElement.parentElement;
     if (chatListItem) {
         chatListItem.remove();
     }
