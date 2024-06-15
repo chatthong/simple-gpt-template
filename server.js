@@ -28,7 +28,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   try {
     if (imagePath) {
       const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
-      const userPrompt = `${userMessage}. You also uploaded an image available at: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
+      const userPrompt = `${userMessage} You also uploaded an image available at: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
 
       const response = await openai.createChatCompletion({
         model: "gpt-4",
