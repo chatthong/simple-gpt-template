@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Fetch and set random avatars for each chat
-    setRandomAvatar('Chat1');
+    // Fetch and set predefined avatars for each chat
+    setAvatar('Chat1');
 });
 
 function openTab(tabId) {
@@ -67,24 +67,20 @@ function addTab() {
     }
     window.conversations[tabId] = [];
 
-    // Fetch and set random avatars for the new chat tab
-    setRandomAvatar(tabId);
+    // Fetch and set predefined avatars for the new chat tab
+    setAvatar(tabId);
 }
 
-async function setRandomAvatar(tabId) {
+async function setAvatar(tabId) {
     try {
-        const response = await fetch(`/api/avatar/${tabId}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const avatarUrl = response.url;
+        const avatarUrl = `/images/1.jpg`; // Change this to the correct path of your predefined avatar image
         const chatItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"] .ml-3`);
         chatItem.innerHTML = `
             <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
             ${chatItem.innerHTML}
         `;
     } catch (error) {
-        console.error('Error fetching random avatar:', error);
+        console.error('Error fetching avatar:', error);
     }
 }
 

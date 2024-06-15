@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const axios = require('axios');
 const { Configuration, OpenAIApi } = require('openai');
 const fs = require('fs');
 const path = require('path');
@@ -13,6 +12,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -21,30 +21,13 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-app.get('/api/avatar/:seed', async (req, res) => {
+app.get('/api/avatar/:seed', (req, res) => {
   const seed = req.params.seed;
-  const filePath = path.resolve(`./avatars/${seed}.svg`);
-
+  const filePath = path.resolve(`./images/${seed}.jpg`);
   if (fs.existsSync(filePath)) {
-    return res.sendFile(filePath);
-  }
-
-  try {
-    const response = await axios.get(`https://avatars.dicebear.com/api/fun-emoji/${seed}.svg`, {
-      responseType: 'stream'
-    });
-
-    response.data.pipe(fs.createWriteStream(filePath))
-      .on('finish', () => {
-        res.sendFile(filePath);
-      })
-      .on('error', (error) => {
-        console.error(error);
-        res.status(500).send('Error generating avatar');
-      });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error fetching avatar');
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Avatar not found');
   }
 });
 
