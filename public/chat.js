@@ -96,7 +96,7 @@ function handleImageChange(event, tabId) {
             displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
             window.conversations[tabId].push({
                 role: 'user',
-                content: base64Image
+                content: { type: 'image', data: base64Image }
             });
 
             // Clear the image input after displaying the preview
@@ -105,6 +105,7 @@ function handleImageChange(event, tabId) {
         reader.readAsDataURL(file);
     }
 }
+
 
 async function setAvatar(tabId) {
     try {
@@ -146,7 +147,7 @@ async function sendMessage(tabId) {
             displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
             window.conversations[tabId].push({
                 role: 'user',
-                content: base64Image
+                content: { type: 'image', data: base64Image }
             });
             formData.append('image', imageInput);
             sendToServer(formData, tabId);
