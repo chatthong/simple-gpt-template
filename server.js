@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 const { Configuration, OpenAIApi } = require('openai');
+const fs = require('fs');
 
 const app = express();
 const port = 3000;
@@ -9,35 +11,37 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+const upload = multer({ dest: 'uploads/' });
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', upload.single('image'), async (req, res) => {
   const userMessage = req.body.message;
-  const imageUrl = req.body.imageUrl;
-
+  const imagePath = req.file ? req.file.path : null;
   let botReply = "I can only respond to text messages at the moment.";
 
   try {
+    let userPrompt = userMessage;
+
+    if (imagePath) {
+      const imageData = fs.readFileSync(imagePath, { encoding: 'base64' });
+      const base64Image = `data:image/jpeg;base64,${imageData}`;
+      userPrompt += `. Here is the image: ${base64Image}. Please describe the image in detail so I can assist you better.`;
+
+      fs.unlinkSync(imagePath);
+    }
+
     const response = await openai.createChatCompletion({
       model: "gpt-4",
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: userMessage },
-            {
-              type: "image_url",
-              image_url: {
-                url: imageUrl,
-                detail: "low",
-              },
-            },
-          ],
-        },
-      ],
+      messages: [{ role: 'user', content: userPrompt }],
+      temperature: 1,
+      max_tokens: 256,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
     });
 
     botReply = response.data.choices[0].message.content;
