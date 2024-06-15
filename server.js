@@ -21,16 +21,19 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+app.get('/api/avatar/:seed', (req, res) => {
+  const seed = req.params.seed;
+  const filePath = path.resolve(`./images/${seed}.jpg`);
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Avatar not found');
+  }
+});
+
 app.post('/api/chat', upload.single('image'), async (req, res) => {
   console.log('Received chat request');
-  let conversation = [];
-  try {
-    conversation = JSON.parse(req.body.conversation);
-  } catch (error) {
-    console.error('Error parsing conversation JSON:', error);
-    return res.status(400).send('Invalid conversation format');
-  }
-
+  const conversation = JSON.parse(req.body.conversation);
   const imagePath = req.file ? req.file.path : null;
   let botReply = "I can only respond to text messages at the moment.";
 
@@ -40,7 +43,18 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
       const base64Image = `data:image/jpeg;base64,${imageData}`;
       conversation.push({
         role: "user",
-        content: `![Image](data:image/jpeg;base64,${base64Image})`
+        content: [
+          {
+            type: "text",
+            text: "Here is the image"
+          },
+          {
+            type: "image_url",
+            image_url: {
+              url: base64Image
+            }
+          }
+        ]
       });
 
       fs.unlinkSync(imagePath);
@@ -49,7 +63,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
     const response = await openai.createChatCompletion({
       model: "gpt-4o",
       messages: conversation,
-      max_tokens: 2000,
+      max_tokens: 1000,
       temperature: 1,
       top_p: 1,
       frequency_penalty: 0,
