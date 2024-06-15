@@ -12,35 +12,29 @@ const ChatWindow = ({ chat, sendMessage }) => {
       return;
     }
 
-    if (inputValue.trim()) {
-      console.log('Sending text message:', inputValue);
-      sendMessage(chat.id, { type: 'text', content: inputValue });
-      setInputValue('');
+    const formData = new FormData();
+    formData.append('conversation', JSON.stringify([{ role: 'user', content: inputValue }]));
+    if (image) {
+      formData.append('image', image);
     }
 
-    if (image) {
-      console.log('Sending image');
-      const formData = new FormData();
-      formData.append('conversation', JSON.stringify([{ role: 'user', content: inputValue }]));
-      formData.append('image', image);
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        body: formData
+      });
 
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        console.log('Received response:', data);
-        sendMessage(chat.id, { type: 'bot', content: data.reply });
-        setImage(null);
-      } catch (error) {
-        console.error('Error occurred while sending message:', error);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+
+      const data = await response.json();
+      console.log('Received response:', data);
+      sendMessage(chat.id, { type: 'bot', content: data.reply });
+      setInputValue('');
+      setImage(null);
+    } catch (error) {
+      console.error('Error occurred while sending message:', error);
     }
   };
 
@@ -66,10 +60,7 @@ const ChatWindow = ({ chat, sendMessage }) => {
           type="file"
           style={{ display: 'none' }}
           id={`image-input-${chat.id}`}
-          onChange={(e) => {
-            console.log('Image selected:', e.target.files[0]);
-            setImage(e.target.files[0]);
-          }}
+          onChange={(e) => setImage(e.target.files[0])}
         />
         <div className="input-group-append">
           <button
