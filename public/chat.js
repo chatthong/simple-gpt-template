@@ -122,7 +122,7 @@ async function sendMessage(tabId) {
                 content: base64Image
             });
             formData.append('image', imageInput);
-            formData.append('conversation', JSON.stringify(conversation)); // Ensure conversation is included
+            formData.set('conversation', JSON.stringify(conversation)); // Ensure conversation is included
             sendToServer(formData, tabId, conversation);
         };
         reader.readAsDataURL(imageInput);
@@ -132,20 +132,24 @@ async function sendMessage(tabId) {
 }
 
 async function sendToServer(formData, tabId, conversation) {
-    const response = await fetch('/api/chat', {
-        method: 'POST',
-        body: formData
-    });
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            body: formData
+        });
 
-    const data = await response.json();
-    displayMessage(tabId, data.reply, 'bot-message');
-    window.conversations[tabId] = conversation;
-    window.conversations[tabId].push({
-        role: 'assistant',
-        content: data.reply
-    });
+        const data = await response.json();
+        displayMessage(tabId, data.reply, 'bot-message');
+        window.conversations[tabId] = conversation;
+        window.conversations[tabId].push({
+            role: 'assistant',
+            content: data.reply
+        });
 
-    document.getElementById(`image-input-${tabId}`).value = '';
+        document.getElementById(`image-input-${tabId}`).value = '';
+    } catch (error) {
+        console.error('Error sending message:', error);
+    }
 }
 
 function displayMessage(tabId, message, className) {
