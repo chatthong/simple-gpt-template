@@ -1,3 +1,5 @@
+document.getElementById('send-button').addEventListener('click', sendMessage);
+
 async function sendMessage() {
   const userInput = document.getElementById('user-input').value;
   const imageInput = document.getElementById('image-input').files[0];
@@ -47,4 +49,7 @@ function displayImage(imageSrc, className) {
   const chatContainer = document.getElementById('chat-container');
   const imageElement = document.createElement('img');
   imageElement.className = `chat-message ${className}`;
-  im
+  imageElement.src = imageSrc;
+  chatContainer.appendChild(imageElement);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
