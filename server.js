@@ -43,7 +43,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
     //   // Process the image as needed
     // }
   } catch (error) {
-    console.error(error);
+    console.error("Error occurred:", error.response ? error.response.data : error.message);
     botReply = 'An error occurred while processing your request.';
   }
 
