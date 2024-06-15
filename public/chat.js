@@ -73,7 +73,7 @@ function addTab() {
 
 async function setRandomAvatar(tabId) {
     try {
-        const response = await fetch('https://avatars.dicebear.com/api/fun-emoji/:seed.svg');
+        const response = await fetch(`https://cors-anywhere.herokuapp.com/https://avatars.dicebear.com/api/fun-emoji/${tabId}.svg`);
         const avatarUrl = response.url;
         const chatItem = document.querySelector(`#chatTabs li[onclick="openTab('${tabId}')"] .ml-3`);
         chatItem.innerHTML = `
