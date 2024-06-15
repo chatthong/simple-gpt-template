@@ -21,7 +21,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 app.post('/api/chat', upload.single('image'), async (req, res) => {
-  const conversation = req.body.conversation;
+  const conversation = JSON.parse(req.body.conversation);
   const imagePath = req.file ? req.file.path : null;
   let botReply = "I can only respond to text messages at the moment.";
 
