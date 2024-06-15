@@ -5,6 +5,7 @@ const multer = require('multer');
 const { Configuration, OpenAIApi } = require('openai');
 const path = require('path');
 const fs = require('fs');
+const sharp = require('sharp');
 
 const app = express();
 const port = 3000;
@@ -27,8 +28,14 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 
   try {
     if (imagePath) {
-      const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
-      const userPrompt = `${userMessage} You also uploaded an image available at: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
+      // Resize the image to improve latency
+      const resizedImagePath = `uploads/resized-${req.file.filename}.jpg`;
+      await sharp(imagePath)
+        .resize({ width: 512, height: 512, fit: 'inside' })
+        .toFile(resizedImagePath);
+
+      const imageUrl = `http://143.198.223.202:${port}/${resizedImagePath}`;
+      const userPrompt = `${userMessage}. Here is the image: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
 
       const response = await openai.createChatCompletion({
         model: "gpt-4",
@@ -42,8 +49,9 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 
       botReply = response.data.choices[0].message.content;
 
-      // Clean up the uploaded image after processing
+      // Clean up the uploaded and resized images after processing
       fs.unlinkSync(imagePath);
+      fs.unlinkSync(resizedImagePath);
     } else {
       const response = await openai.createChatCompletion({
         model: "gpt-4",
