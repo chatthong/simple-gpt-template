@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
             Chat1: []
         };
     }
+
+    // Fetch and set random avatars for each chat
+    setRandomAvatar('Chat1');
 });
 
 function openTab(tabId) {
@@ -63,63 +66,5 @@ function addTab() {
         window.conversations = {};
     }
     window.conversations[tabId] = [];
-}
 
-async function sendMessage(tabId) {
-    const userInput = document.getElementById(`user-input-${tabId}`).value;
-    const imageInput = document.getElementById(`image-input-${tabId}`).files[0];
-
-    if (!userInput && !imageInput) return;
-
-    if (userInput) {
-        displayMessage(tabId, userInput, 'user-message');
-        window.conversations[tabId].push({
-            role: 'user',
-            content: userInput
-        });
-    }
-
-    document.getElementById(`user-input-${tabId}`).value = '';
-
-    const formData = new FormData();
-    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
-    if (imageInput) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64Image = e.target.result;
-            displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
-            window.conversations[tabId].push({
-                role: 'user',
-                content: { type: 'image', data: base64Image }
-            });
-            formData.append('image', imageInput);
-            sendToServer(formData, tabId);
-        };
-        reader.readAsDataURL(imageInput);
-    } else {
-        sendToServer(formData, tabId);
-    }
-}
-
-async function sendToServer(formData, tabId) {
-    const response = await fetch('/api/chat', {
-        method: 'POST',
-        body: formData
-    });
-
-    const data = await response.json();
-    displayMessage(tabId, data.reply, 'bot-message');
-    window.conversations[tabId].push({
-        role: 'assistant',
-        content: data.reply
-    });
-}
-
-function displayMessage(tabId, message, className) {
-    const chatContainer = document.getElementById(`messages-${tabId}`);
-    const messageElement = document.createElement('div');
-    messageElement.className = `chat-message ${className}`;
-    messageElement.innerHTML = message;
-    chatContainer.appendChild(messageElement);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-}
+    // Fetch and set random avatars for th

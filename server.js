@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const axios = require('axios'); // Added axios
 const { Configuration, OpenAIApi } = require('openai');
 const fs = require('fs');
 const path = require('path');
