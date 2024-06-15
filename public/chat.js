@@ -1,4 +1,6 @@
-document.getElementById('send-button').addEventListener('click', sendMessage);
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('send-button').addEventListener('click', sendMessage);
+});
 
 async function sendMessage() {
   const userInput = document.getElementById('user-input').value;
