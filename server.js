@@ -28,25 +28,29 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   try {
     let additionalContext = '';
     if (imagePath) {
-      const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
-      additionalContext = ` Here is the image: ${imageUrl}.`;
-    }
+      const imageBuffer = fs.readFileSync(imagePath);
+      const response = await openai.createImageChatCompletion({
+        model: "gpt-4-vision",
+        images: [imageBuffer],
+        messages: [{ role: 'user', content: userMessage }],
+      });
 
-    const response = await openai.createChatCompletion({
-      model: "gpt-4",
-      messages: [{ role: 'user', content: userMessage + additionalContext }],
-      temperature: 1,
-      max_tokens: 256,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
+      botReply = response.data.choices[0].message.content;
 
-    botReply = response.data.choices[0].message.content;
-
-    // Clean up the uploaded image after processing
-    if (imagePath) {
+      // Clean up the uploaded image after processing
       fs.unlinkSync(imagePath);
+    } else {
+      const response = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: [{ role: 'user', content: userMessage }],
+        temperature: 1,
+        max_tokens: 256,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+
+      botReply = response.data.choices[0].message.content;
     }
   } catch (error) {
     console.error("Error occurred:", error.response ? error.response.data : error.message);
