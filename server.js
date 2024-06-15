@@ -28,11 +28,12 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
     if (userMessage) {
       let additionalContext = '';
       
-      // Handle image context
       if (imagePath) {
-        additionalContext = ' The user also uploaded an image.';
-        // You can optionally process the image here if needed, for example, store it or use it with another API.
-        fs.unlinkSync(imagePath);  // Clean up the uploaded image
+        // Create a reference to the image
+        additionalContext = ` The user also uploaded an image: ${imagePath}`;
+        // Optionally, process the image here
+        // For example, you can upload it to a storage service and get a URL
+        // fs.unlinkSync(imagePath);  // Clean up the uploaded image if needed
       }
 
       const response = await openai.createChatCompletion({
