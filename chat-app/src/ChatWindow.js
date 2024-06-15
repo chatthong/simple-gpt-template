@@ -1,3 +1,4 @@
+// ChatWindow.js
 import React, { useState } from 'react';
 
 const ChatWindow = ({ chat, sendMessage }) => {
@@ -5,23 +6,25 @@ const ChatWindow = ({ chat, sendMessage }) => {
   const [image, setImage] = useState(null);
 
   const handleSendMessage = async () => {
-    if (inputValue.trim()) {
-      sendMessage(chat.id, { type: 'text', content: inputValue });
-      setInputValue('');
-    }
-    if (image) {
-      const formData = new FormData();
-      formData.append('conversation', JSON.stringify([{ role: 'user', content: inputValue }]));
-      formData.append('image', image);
+    if (inputValue.trim() || image) {
+      if (inputValue.trim()) {
+        sendMessage(chat.id, { type: 'text', content: inputValue });
+        setInputValue('');
+      }
+      if (image) {
+        const formData = new FormData();
+        formData.append('conversation', JSON.stringify([{ role: 'user', content: inputValue }]));
+        formData.append('image', image);
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        body: formData
-      });
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          body: formData
+        });
 
-      const data = await response.json();
-      sendMessage(chat.id, { type: 'bot', content: data.reply });
-      setImage(null);
+        const data = await response.json();
+        sendMessage(chat.id, { type: 'bot', content: data.reply });
+        setImage(null);
+      }
     }
   };
 
