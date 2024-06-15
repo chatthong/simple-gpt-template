@@ -27,14 +27,17 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 
   try {
     if (imagePath) {
-      const imageBuffer = fs.readFileSync(imagePath);
+      const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
+      const userPrompt = `${userMessage}. You also uploaded an image available at: ${imageUrl}. Please describe the image in detail so I can assist you better.`;
+
       const response = await openai.createChatCompletion({
-        model: "gpt-4-vision",
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant that can understand and analyze images.' },
-          { role: 'user', content: userMessage, name: "user" },
-        ],
-        files: [{ file: imageBuffer, type: 'image/png' }]
+        model: "gpt-4",
+        messages: [{ role: 'user', content: userPrompt }],
+        temperature: 1,
+        max_tokens: 256,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
       });
 
       botReply = response.data.choices[0].message.content;
