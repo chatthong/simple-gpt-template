@@ -11,6 +11,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -27,8 +28,8 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   try {
     let additionalContext = '';
     if (imagePath) {
-      const imageUrl = `http://143.198.223.202:${port}/${req.file.filename}`; // URL to access the uploaded image
-      additionalContext = ` The user also uploaded an image available at: ${imageUrl}.`;
+      const imageUrl = `http://143.198.223.202:${port}/uploads/${req.file.filename}`;
+      additionalContext = ` The user also uploaded an image available at: ${imageUrl}. Please provide any context or details about this image that can help understand it.`;
     }
 
     const response = await openai.createChatCompletion({
@@ -56,5 +57,5 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://143.198.223.202:${port}`);
 });
