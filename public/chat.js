@@ -50,7 +50,7 @@ function addTab() {
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
-                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange('${tabId}')">
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange(event, '${tabId}')">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
                 <div id="image-preview-${tabId}" class="mt-2"></div>
@@ -70,8 +70,8 @@ function addTab() {
     setAvatar(tabId);
 }
 
-function handleImageChange(tabId) {
-    const imageInput = document.getElementById(`image-input-${tabId}`);
+function handleImageChange(event, tabId) {
+    const imageInput = event.target;
     const previewContainer = document.getElementById(`image-preview-${tabId}`);
     previewContainer.innerHTML = '';
 
@@ -91,7 +91,7 @@ function handleImageChange(tabId) {
 
 async function setAvatar(tabId) {
     try {
-        const avatarUrl = `/images/1.jpg`;
+        const avatarUrl = `/images/1.jpg`; // Make sure this path is correct
         const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`);
         if (chatItem) {
             chatItem.innerHTML = `
