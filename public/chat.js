@@ -50,9 +50,10 @@ function addTab() {
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
-                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange('${tabId}')">
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="uploadImage(event, '${tabId}')">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
+                <div id="image-preview-${tabId}" class="mt-2"></div>
             </div>
         </div>
     `;
@@ -69,12 +70,29 @@ function addTab() {
     setAvatar(tabId);
 }
 
-function handleImageChange(tabId) {
-    const imageInput = document.getElementById(`image-input-${tabId}`);
-    if (imageInput.files.length > 0) {
-        // Image selected
-    } else {
-        // Image cleared
+async function uploadImage(event, chatId) {
+    const file = event.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.url) {
+                displayMessage(chatId, `<img src="${data.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
+                window.conversations[chatId].push({
+                    role: 'user',
+                    content: { type: 'image', url: data.url }
+                });
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+        }
     }
 }
 
@@ -110,21 +128,10 @@ async function sendMessage(tabId) {
     const formData = new FormData();
     formData.append('conversation', JSON.stringify(window.conversations[tabId]));
     if (imageInput) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64Image = e.target.result;
-            displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
-            window.conversations[tabId].push({
-                role: 'user',
-                content: { type: 'image', data: base64Image }
-            });
-            formData.append('image', imageInput);
-            sendToServer(formData, tabId);
-        };
-        reader.readAsDataURL(imageInput);
-    } else {
-        sendToServer(formData, tabId);
+        await uploadImage({ target: { files: [imageInput] } }, tabId);
     }
+
+    sendToServer(formData, tabId);
 }
 
 async function sendToServer(formData, tabId) {
@@ -140,7 +147,6 @@ async function sendToServer(formData, tabId) {
         content: data.reply
     });
 
-    // Clear the image input after sending the message
     document.getElementById(`image-input-${tabId}`).value = '';
 }
 

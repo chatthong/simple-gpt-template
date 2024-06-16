@@ -14,7 +14,16 @@ app.use(express.static('public'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage });
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -31,24 +40,21 @@ app.get('/api/avatar/:seed', (req, res) => {
   }
 });
 
-app.post('/api/chat', upload.single('image'), async (req, res) => {
+app.post('/upload', upload.single('image'), (req, res) => {
+  if (req.file) {
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    res.json({ url: imageUrl });
+  } else {
+    res.status(400).send('No file uploaded.');
+  }
+});
+
+app.post('/api/chat', async (req, res) => {
   console.log('Received chat request');
   const conversation = JSON.parse(req.body.conversation);
-  const imagePath = req.file ? req.file.path : null;
   let botReply = "I can only respond to text messages at the moment.";
 
   try {
-    if (imagePath) {
-      const imageData = fs.readFileSync(imagePath, { encoding: 'base64' });
-      const base64Image = `data:image/jpeg;base64,${imageData}`;
-      conversation.push({
-        role: "user",
-        content: `Here is the image: ${base64Image}`
-      });
-
-      fs.unlinkSync(imagePath);
-    }
-
     const messages = [
       {
         role: "system",
@@ -88,12 +94,6 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
   }
 
   res.json({ reply: botReply });
-});
-
-// Serve the React app
-app.use(express.static(path.join(__dirname, 'build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {
