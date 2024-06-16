@@ -50,7 +50,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
-app.post('/api/chat', upload.none(), async (req, res) => {
+app.post('/api/chat', upload.single('image'), async (req, res) => {
     console.log('Received chat request');
     let conversation;
     try {
@@ -60,20 +60,13 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         return res.status(400).json({ error: 'Invalid conversation format' });
     }
 
-    const messages = [
-        {
-            role: "system",
-            content: process.env.MASTER_PROMPT
-        },
-        {
-            role: "user",
-            content: "สวัสดีครับ"
-        },
-        {
-            role: "assistant",
-            content: "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊"
-        }
-    ].concat(conversation);
+    // Prepare the conversation for API request
+    const systemMessage = {
+        role: "system",
+        content: process.env.MASTER_PROMPT
+    };
+
+    const messages = [systemMessage].concat(conversation);
 
     console.log('Formatted messages for OpenAI:', messages);
 
@@ -92,15 +85,6 @@ app.post('/api/chat', upload.none(), async (req, res) => {
 
     res.json({ reply: botReply });
 });
-
-app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
-
-function calculateTokens(text) {
-    // Rough estimation: 1 token per 4 characters in the text
-    return Math.ceil(text.length / 4);
-}
 
 async function fetchChatCompletion(messages, retries = 5) {
     try {
@@ -124,3 +108,7 @@ async function fetchChatCompletion(messages, retries = 5) {
         }
     }
 }
+
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running at http://localhost:${port}`);
+});

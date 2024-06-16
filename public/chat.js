@@ -105,6 +105,23 @@ async function uploadImage(event, chatId) {
     }
 }
 
+async function setAvatar(tabId) {
+    try {
+        const avatarUrl = `/images/1.jpg`;
+        const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`);
+        if (chatItem) {
+            chatItem.innerHTML = `
+                <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
+                ${chatItem.innerHTML}
+            `;
+        } else {
+            console.error('Chat item not found for tabId:', tabId);
+        }
+    } catch (error) {
+        console.error('Error fetching avatar:', error);
+    }
+}
+
 async function sendMessage(tabId) {
     const sendButton = document.querySelector(`#user-input-${tabId}`).nextElementSibling.nextElementSibling;
     const userInput = document.getElementById(`user-input-${tabId}`).value;
@@ -114,25 +131,6 @@ async function sendMessage(tabId) {
 
     // Disable the send button to prevent multiple clicks
     sendButton.disabled = true;
-
-    const formData = new FormData();
-    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
-
-    if (imageInput) {
-        try {
-            const imageUrl = await uploadImage(imageInput);
-            displayMessage(tabId, `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`, 'user-message');
-            window.conversations[tabId].push({
-                role: 'user',
-                content: { type: 'image', url: imageUrl }
-            });
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            alert('Failed to upload image. Please try again.');
-            sendButton.disabled = false;
-            return;
-        }
-    }
 
     if (userInput) {
         displayMessage(tabId, userInput, 'user-message');
@@ -144,6 +142,12 @@ async function sendMessage(tabId) {
 
     document.getElementById(`user-input-${tabId}`).value = '';
 
+    const formData = new FormData();
+    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
+    if (imageInput) {
+        formData.append('image', imageInput);
+    }
+
     try {
         await sendToServer(formData, tabId);
     } catch (error) {
@@ -153,6 +157,8 @@ async function sendMessage(tabId) {
         sendButton.disabled = false;
     }
 }
+
+
 
 async function sendToServer(formData, tabId) {
     try {
@@ -177,27 +183,13 @@ async function sendToServer(formData, tabId) {
         } else {
             throw new Error('Invalid response data');
         }
+
+        document.getElementById(`image-input-${tabId}`).value = '';
     } catch (error) {
         console.error('Error sending to server:', error);
     }
 }
 
-async function setAvatar(tabId) {
-    try {
-        const avatarUrl = `/images/1.jpg`;
-        const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`);
-        if (chatItem) {
-            chatItem.innerHTML = `
-                <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
-                ${chatItem.innerHTML}
-            `;
-        } else {
-            console.error('Chat item not found for tabId:', tabId);
-        }
-    } catch (error) {
-        console.error('Error fetching avatar:', error);
-    }
-}
 
 function displayMessage(tabId, message, className) {
     const chatContainer = document.getElementById(`messages-${tabId}`);
