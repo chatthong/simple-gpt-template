@@ -81,13 +81,13 @@ function handleImageChange(event, tabId) {
             // Display the fake image preview
             previewContainer.innerHTML = `<img src="${base64Image}" class="img-thumbnail" />`;
 
-            // You can also include the message in the chat window if desired
+            // Display the image in the chat window
             displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
 
-            // Add the image to the conversation (you can modify this part as needed)
+            // Add the image to the conversation (format the content as a string)
             window.conversations[tabId].push({
                 role: 'user',
-                content: { type: 'image', data: base64Image }
+                content: base64Image // Ensure the content is a string
             });
 
             // Clear the image input after displaying the preview
