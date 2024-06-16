@@ -35,7 +35,7 @@
                         <input type="text" class="form-control" id="user-input-Chat1" placeholder="Type something...">
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-Chat1').click()">Upload</button>
-                            <input type="file" id="image-input-Chat1" accept="image/*" style="display: none;" onchange="uploadImage(event, 'Chat1')">
+                            <input type="file" id="image-input-Chat1" accept="image/*" style="display: none;" onchange="handleImageUpload(event, 'Chat1')">">
                             <button class="btn btn-primary" onclick="sendMessage('Chat1')" type="button">Send</button>
                         </div>
                         <div id="image-preview-Chat1" class="mt-2"></div>
