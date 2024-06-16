@@ -122,10 +122,14 @@ async function setAvatar(tabId) {
 }
 
 async function sendMessage(tabId) {
+    const sendButton = document.querySelector(`#user-input-${tabId}`).nextElementSibling.nextElementSibling;
     const userInput = document.getElementById(`user-input-${tabId}`).value;
     const imageInput = document.getElementById(`image-input-${tabId}`).files[0];
 
     if (!userInput && !imageInput) return;
+
+    // Disable the send button to prevent multiple clicks
+    sendButton.disabled = true;
 
     if (userInput) {
         displayMessage(tabId, userInput, 'user-message');
@@ -147,9 +151,11 @@ async function sendMessage(tabId) {
         await sendToServer(formData, tabId);
     } catch (error) {
         console.error('Error sending message to server:', error);
+    } finally {
+        // Re-enable the send button after the message has been sent
+        sendButton.disabled = false;
     }
 }
-
 
 async function sendToServer(formData, tabId) {
     try {
