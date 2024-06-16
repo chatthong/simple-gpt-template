@@ -88,8 +88,8 @@ function attachImageUploadHandler(chatId) {
     }
 }
 
-function handleImageUpload(event, chatId) {
-   const file = event.target.files[0];
+async function handleImageUpload(event, chatId) {
+    const file = event.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
@@ -122,6 +122,7 @@ function previewImage(imageUrl, chatId) {
     imgElement.style.maxHeight = '200px';
     previewContainer.appendChild(imgElement);
 }
+
 
 async function setAvatar(tabId) {
     try {
