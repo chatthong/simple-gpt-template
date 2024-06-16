@@ -86,16 +86,8 @@ async function uploadImage(event, chatId) {
                 throw new Error(`Image upload failed: ${response.statusText}`);
             }
 
-            const responseData = await response.text(); // Capture the raw response as text
-            console.log('Raw image upload response:', responseData);
-
-            let data;
-            try {
-                data = JSON.parse(responseData); // Parse the raw response as JSON
-            } catch (e) {
-                console.error('Error parsing JSON:', e);
-                throw new Error('Failed to parse JSON response');
-            }
+            const data = await response.json();
+            console.log('Image upload response:', data);
 
             if (data.url) {
                 displayMessage(chatId, `<img src="${data.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
@@ -111,9 +103,6 @@ async function uploadImage(event, chatId) {
         }
     }
 }
-
-
-
 
 async function setAvatar(tabId) {
     try {
@@ -172,16 +161,8 @@ async function sendToServer(formData, tabId) {
             throw new Error(`Server error: ${response.statusText}`);
         }
 
-        const responseData = await response.text(); // Capture the raw response as text
-        console.log('Raw server response:', responseData);
-
-        let data;
-        try {
-            data = JSON.parse(responseData); // Parse the raw response as JSON
-        } catch (e) {
-            console.error('Error parsing JSON:', e);
-            throw new Error('Failed to parse JSON response');
-        }
+        const data = await response.json();
+        console.log('Server response:', data);
 
         if (data.reply) {
             displayMessage(tabId, data.reply, 'bot-message');
@@ -198,8 +179,6 @@ async function sendToServer(formData, tabId) {
         console.error('Error sending to server:', error);
     }
 }
-
-
 
 function displayMessage(tabId, message, className) {
     const chatContainer = document.getElementById(`messages-${tabId}`);
