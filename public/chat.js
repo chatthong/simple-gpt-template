@@ -50,10 +50,9 @@ function addTab() {
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
-                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange(event, '${tabId}')">
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange('${tabId}')">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
-                <div id="image-preview-${tabId}" class="mt-2"></div>
             </div>
         </div>
     `;
@@ -70,35 +69,23 @@ function addTab() {
     setAvatar(tabId);
 }
 
-function handleImageChange(event, tabId) {
-    const imageInput = event.target;
-    const previewContainer = document.getElementById(`image-preview-${tabId}`);
-    previewContainer.innerHTML = '';
-
+function handleImageChange(tabId) {
+    const imageInput = document.getElementById(`image-input-${tabId}`);
     if (imageInput.files.length > 0) {
-        const file = imageInput.files[0];
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const imgElement = document.createElement('img');
-            imgElement.src = e.target.result;
-            imgElement.className = 'img-thumbnail';
-            imgElement.style.maxWidth = '100px';  // Adjust as needed
-            previewContainer.appendChild(imgElement);
-        };
-        reader.readAsDataURL(file);
+        // Image selected
+    } else {
+        // Image cleared
     }
 }
 
 async function setAvatar(tabId) {
     try {
-        const avatarUrl = `/images/1.jpg`; // Make sure this path is correct
+        const avatarUrl = `/images/1.jpg`;
         const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`);
-        if (chatItem) {
-            chatItem.innerHTML = `
-                <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
-                ${chatItem.innerHTML}
-            `;
-        }
+        chatItem.innerHTML = `
+            <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
+            ${chatItem.innerHTML}
+        `;
     } catch (error) {
         console.error('Error fetching avatar:', error);
     }
@@ -155,7 +142,6 @@ async function sendToServer(formData, tabId) {
 
     // Clear the image input after sending the message
     document.getElementById(`image-input-${tabId}`).value = '';
-    document.getElementById(`image-preview-${tabId}`).innerHTML = '';
 }
 
 function displayMessage(tabId, message, className) {
