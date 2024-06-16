@@ -125,12 +125,6 @@ function clearImagePreview(chatId) {
     previewContainer.innerHTML = '';
 }
 
-function displayImagePreview(imageUrl, chatId) {
-    const previewContainer = document.getElementById(`image-preview-${chatId}`);
-    previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
-}
-
-
 async function setAvatar(tabId) {
     try {
         const avatarUrl = `/images/1.jpg`;
@@ -227,7 +221,6 @@ function displayMessage(tabId, message, imageUrl = '', className = 'user-message
     // Update last message preview
     updateLastMessagePreview(tabId, message);
 }
-
 
 function updateLastMessagePreview(tabId, message) {
     const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
