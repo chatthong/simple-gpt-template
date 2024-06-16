@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch and set predefined avatars for each chat
     setAvatar('Chat1');
+
+    // Attach event handlers for existing image inputs
+    attachImageUploadHandlers();
 });
 
 function openTab(tabId) {
@@ -50,7 +53,7 @@ function addTab() {
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
-                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageUpload(event, '${tabId}')">
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
                 <div id="image-preview-${tabId}" class="mt-2"></div>
@@ -66,8 +69,23 @@ function addTab() {
     }
     window.conversations[tabId] = [];
 
-    // Fetch and set predefined avatars for the new chat tab
-    setAvatar(tabId);
+    // Attach event handler for the new image input
+    attachImageUploadHandler(tabId);
+}
+
+function attachImageUploadHandlers() {
+    const imageInputs = document.querySelectorAll('input[type="file"][id^="image-input-"]');
+    imageInputs.forEach(input => {
+        const chatId = input.id.replace('image-input-', '');
+        input.addEventListener('change', (event) => handleImageUpload(event, chatId));
+    });
+}
+
+function attachImageUploadHandler(chatId) {
+    const input = document.getElementById(`image-input-${chatId}`);
+    if (input) {
+        input.addEventListener('change', (event) => handleImageUpload(event, chatId));
+    }
 }
 
 function handleImageUpload(event, chatId) {
@@ -101,15 +119,14 @@ function handleImageUpload(event, chatId) {
     }
 }
 
-function clearImagePreview(chatId) {
-    const previewContainer = document.getElementById(`image-preview-${chatId}`);
-    previewContainer.innerHTML = '';
-}
-
-
 function displayImagePreview(imageUrl, chatId) {
     const previewContainer = document.getElementById(`image-preview-${chatId}`);
     previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
+}
+
+function clearImagePreview(chatId) {
+    const previewContainer = document.getElementById(`image-preview-${chatId}`);
+    previewContainer.innerHTML = '';
 }
 
 async function setAvatar(tabId) {
