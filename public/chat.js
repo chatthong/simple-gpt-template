@@ -8,6 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch and set predefined avatars for each chat
     setAvatar('Chat1');
+
+    // Enable Enter key to send messages
+    document.getElementById('user-input-Chat1').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage('Chat1');
+            event.preventDefault();
+        }
+    });
 });
 
 function openTab(tabId) {
@@ -16,6 +24,15 @@ function openTab(tabId) {
         tabcontent[i].classList.remove('active');
     }
     document.getElementById(tabId).classList.add('active');
+
+    // Enable Enter key to send messages
+    const userInput = document.getElementById(`user-input-${tabId}`);
+    userInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage(tabId);
+            event.preventDefault();
+        }
+    });
 }
 
 let tabCount = 1;
@@ -50,7 +67,7 @@ function addTab() {
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
-                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange('${tabId}')">
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageChange(event, '${tabId}')">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
             </div>
@@ -76,18 +93,10 @@ function handleImageChange(event, tabId) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const base64Image = e.target.result;
-            const previewContainer = document.getElementById(`image-preview-${tabId}`);
-            
-            // Display the fake image preview
-            previewContainer.innerHTML = `<img src="${base64Image}" class="img-thumbnail" />`;
-
-            // Display the image in the chat window
             displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
-
-            // Add the image to the conversation (format the content as a string)
             window.conversations[tabId].push({
                 role: 'user',
-                content: base64Image // Ensure the content is a string
+                content: { type: 'image', data: base64Image }
             });
 
             // Clear the image input after displaying the preview
@@ -97,38 +106,16 @@ function handleImageChange(event, tabId) {
     }
 }
 
-// Include other necessary JavaScript functions here, such as sendMessage, addTab, etc.
-// ...
-
-document.addEventListener('DOMContentLoaded', function() {
-    openTab('Chat1');
-    if (!window.conversations) {
-        window.conversations = {
-            Chat1: []
-        };
-    }
-
-    // Fetch and set predefined avatars for each chat
-    setAvatar('Chat1');
-
-    // Enable Enter key to send messages
-    document.getElementById('user-input-Chat1').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            sendMessage('Chat1');
-            event.preventDefault();
-        }
-    });
-});
-
-
 async function setAvatar(tabId) {
     try {
-        const avatarUrl = `/images/1.jpg`;
+        const avatarUrl = `/images/1.jpg`; // Make sure this path is correct
         const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`);
-        chatItem.innerHTML = `
-            <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
-            ${chatItem.innerHTML}
-        `;
+        if (chatItem) {
+            chatItem.innerHTML = `
+                <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
+                ${chatItem.innerHTML}
+            `;
+        }
     } catch (error) {
         console.error('Error fetching avatar:', error);
     }
@@ -201,10 +188,11 @@ function displayMessage(tabId, message, className) {
 
 // Function to update last message preview
 function updateLastMessagePreview(tabId, message) {
-    const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
+    const previewText = typeof message === 'string' ? message : 'Image';
+    const truncatedPreviewText = previewText.length > 20 ? previewText.substring(0, 20) + '...' : previewText;
     const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"] small`);
     if (chatItem) {
-        chatItem.textContent = previewText;
+        chatItem.textContent = truncatedPreviewText;
     }
 }
 
