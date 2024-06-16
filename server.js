@@ -50,6 +50,29 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
+async function fetchChatCompletion(messages, retries = 5) {
+    try {
+        const response = await openai.createChatCompletion({
+            model: "gpt-4o",
+            messages: messages,
+            max_tokens: 1000, // Adjust this as needed
+            temperature: 1,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+        });
+        return response.data.choices[0].message.content;
+    } catch (error) {
+        if (error.response && error.response.status === 429 && retries > 0) {
+            console.warn(`Rate limit hit, retrying... (${retries} retries left)`);
+            await new Promise(resolve => setTimeout(resolve, 2000 * (5 - retries))); // Exponential backoff
+            return fetchChatCompletion(messages, retries - 1);
+        } else {
+            throw error;
+        }
+    }
+}
+
 app.post('/api/chat', upload.none(), async (req, res) => {
     console.log('Received chat request');
     let conversation;
@@ -60,6 +83,7 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         return res.status(400).json({ error: 'Invalid conversation format' });
     }
 
+    // Prepare the conversation for API request
     const messages = [
         {
             role: "system",
@@ -96,31 +120,3 @@ app.post('/api/chat', upload.none(), async (req, res) => {
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-
-function calculateTokens(text) {
-    // Rough estimation: 1 token per 4 characters in the text
-    return Math.ceil(text.length / 4);
-}
-
-async function fetchChatCompletion(messages, retries = 5) {
-    try {
-        const response = await openai.createChatCompletion({
-            model: "gpt-4o",
-            messages: messages,
-            max_tokens: 2000, // Adjust this as needed
-            temperature: 1,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0
-        });
-        return response.data.choices[0].message.content;
-    } catch (error) {
-        if (error.response && error.response.status === 429 && retries > 0) {
-            console.warn(`Rate limit hit, retrying... (${retries} retries left)`);
-            await new Promise(resolve => setTimeout(resolve, 2000 * (5 - retries))); // Exponential backoff
-            return fetchChatCompletion(messages, retries - 1);
-        } else {
-            throw error;
-        }
-    }
-}
