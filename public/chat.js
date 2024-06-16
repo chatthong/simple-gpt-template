@@ -79,15 +79,31 @@ function handleImageChange(event, tabId) {
         const file = imageInput.files[0];
         const reader = new FileReader();
         reader.onload = function(e) {
+            const base64Image = e.target.result;
+            
+            // Display thumbnail preview
             const imgElement = document.createElement('img');
-            imgElement.src = e.target.result;
+            imgElement.src = base64Image;
             imgElement.className = 'img-thumbnail';
             imgElement.style.maxWidth = '100px';  // Adjust as needed
             previewContainer.appendChild(imgElement);
+            
+            // Display message in chat
+            displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
+            
+            // Add to conversation
+            window.conversations[tabId].push({
+                role: 'user',
+                content: { type: 'image', data: base64Image }
+            });
+
+            // Clear the image input after displaying the preview
+            imageInput.value = '';
         };
         reader.readAsDataURL(file);
     }
 }
+
 
 async function setAvatar(tabId) {
     try {

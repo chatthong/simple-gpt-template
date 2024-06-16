@@ -34,14 +34,15 @@
                     <div class="chat-content" id="messages-Chat1">
                         <!-- Chat messages will be dynamically added here -->
                     </div>
-                    <div class="input-group mt-3">
-                        <input type="text" class="form-control" id="user-input-Chat1" placeholder="Type something...">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-Chat1').click()">Upload</button>
-                            <input type="file" id="image-input-Chat1" accept="image/*" style="display: none;" onchange="handleImageChange(event, 'Chat1')">
-                            <button class="btn btn-primary" onclick="sendMessage('Chat1')" type="button">Send</button>
+                        <div class="input-group mt-3">
+                            <input type="text" class="form-control" id="user-input-Chat1" placeholder="Type something...">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-Chat1').click()">Upload</button>
+                                <input type="file" id="image-input-Chat1" accept="image/*" style="display: none;" onchange="handleImageChange(event, 'Chat1')">
+                                <button class="btn btn-primary" onclick="sendMessage('Chat1')" type="button">Send</button>
+                            </div>
+                            <div id="image-preview-Chat1" class="mt-2"></div> <!-- Add this line -->
                         </div>
-                    </div>
                 </div>
                 <!-- More chat windows will be dynamically added here -->
             </div>
