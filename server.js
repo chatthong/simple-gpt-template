@@ -60,15 +60,6 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         return res.status(400).json({ error: 'Invalid conversation format' });
     }
 
-    // Trim the conversation to the most recent messages to stay within token limits
-    const maxTokens = 4000; // Adjust based on the model's token limit
-    let totalTokens = 0;
-
-    conversation = conversation.reverse().filter(message => {
-        totalTokens += message.content.length / 4; // Rough estimate of tokens
-        return totalTokens < maxTokens;
-    }).reverse();
-
     let botReply = "I can only respond to text messages at the moment.";
 
     try {
@@ -92,7 +83,7 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         const response = await openai.createChatCompletion({
             model: "gpt-4o",
             messages: messages,
-            max_tokens: 2000, // Adjust this as needed
+            max_tokens: 1000,
             temperature: 1,
             top_p: 1,
             frequency_penalty: 0,
@@ -111,6 +102,7 @@ app.post('/api/chat', upload.none(), async (req, res) => {
 
     res.json({ reply: botReply });
 });
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running at http://localhost:${port}`);
