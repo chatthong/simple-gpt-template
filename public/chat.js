@@ -150,6 +150,7 @@ async function sendMessage(tabId) {
     }
 }
 
+
 async function sendToServer(formData, tabId) {
     try {
         const response = await fetch('/api/chat', {

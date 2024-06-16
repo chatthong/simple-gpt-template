@@ -50,7 +50,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', upload.none(), async (req, res) => {
     console.log('Received chat request');
     let conversation;
     try {
@@ -85,7 +85,7 @@ app.post('/api/chat', async (req, res) => {
         console.log('Sending messages to OpenAI:', messages);
 
         const response = await openai.createChatCompletion({
-            model: "gpt-4o",
+            model: "gpt-4",
             messages: messages,
             max_tokens: 1000,
             temperature: 1,
@@ -106,6 +106,7 @@ app.post('/api/chat', async (req, res) => {
 
     res.json({ reply: botReply });
 });
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running at http://localhost:${port}`);
