@@ -52,7 +52,7 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
     const messages = [
       {
         role: "system",
-        content: "ผู้ช่วยขายสินค้า"
+        content: process.env.MASTER_PROMPT
       },
       {
         role: "user",
