@@ -124,6 +124,7 @@ function previewImage(imageUrl, chatId) {
 }
 
 
+
 async function setAvatar(tabId) {
     try {
         const avatarUrl = `/images/1.jpg`;
