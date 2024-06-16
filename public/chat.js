@@ -100,6 +100,7 @@ async function uploadImage(event, chatId) {
             }
         } catch (error) {
             console.error('Error uploading image:', error);
+            alert('Failed to upload image. Please try again.');
         }
     }
 }

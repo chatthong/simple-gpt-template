@@ -50,7 +50,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
-app.post('/api/chat', upload.single('image'), async (req, res) => {
+app.post('/api/chat', upload.none(), async (req, res) => {
     console.log('Received chat request');
     let conversation;
     try {
@@ -61,10 +61,13 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
     }
 
     // Trim the conversation to the most recent messages to stay within token limits
-    const maxMessages = 5; // Adjust based on the average message length
-    if (conversation.length > maxMessages) {
-        conversation = conversation.slice(-maxMessages);
-    }
+    const maxTokens = 4000; // Adjust based on the model's token limit
+    let totalTokens = 0;
+
+    conversation = conversation.reverse().filter(message => {
+        totalTokens += message.content.length / 4; // Rough estimate of tokens
+        return totalTokens < maxTokens;
+    }).reverse();
 
     let botReply = "I can only respond to text messages at the moment.";
 
@@ -91,9 +94,9 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         console.log('Sending messages to OpenAI:', messages);
 
         const response = await openai.createChatCompletion({
-            model: "gpt-4o",
+            model: "gpt-4",
             messages: messages,
-            max_tokens: 2000, // Adjust this as needed
+            max_tokens: 1000, // Adjust this as needed
             temperature: 1,
             top_p: 1,
             frequency_penalty: 0,
