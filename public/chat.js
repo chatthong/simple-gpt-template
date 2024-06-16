@@ -83,12 +83,15 @@ async function uploadImage(event, chatId) {
             });
 
             const data = await response.json();
+            console.log('Image upload response:', data);
             if (data.url) {
                 displayMessage(chatId, `<img src="${data.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
                 window.conversations[chatId].push({
                     role: 'user',
                     content: { type: 'image', url: data.url }
                 });
+            } else {
+                console.error('Failed to get image URL:', data);
             }
         } catch (error) {
             console.error('Error uploading image:', error);
@@ -154,6 +157,7 @@ async function sendToServer(formData, tabId) {
         }
 
         const data = await response.json();
+        console.log('Server response:', data);
         displayMessage(tabId, data.reply, 'bot-message');
         window.conversations[tabId].push({
             role: 'assistant',
