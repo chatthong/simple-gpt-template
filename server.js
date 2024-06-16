@@ -50,6 +50,29 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
+async function fetchChatCompletion(messages, retries = 5) {
+    try {
+        const response = await openai.createChatCompletion({
+            model: "gpt-4",
+            messages: messages,
+            max_tokens: 1000, // Adjust this as needed
+            temperature: 1,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+        });
+        return response.data.choices[0].message.content;
+    } catch (error) {
+        if (error.response && error.response.status === 429 && retries > 0) {
+            console.warn(`Rate limit hit, retrying... (${retries} retries left)`);
+            await new Promise(resolve => setTimeout(resolve, 2000 * (5 - retries))); // Exponential backoff
+            return fetchChatCompletion(messages, retries - 1);
+        } else {
+            throw error;
+        }
+    }
+}
+
 app.post('/api/chat', upload.none(), async (req, res) => {
     console.log('Received chat request');
     let conversation;
@@ -93,17 +116,7 @@ app.post('/api/chat', upload.none(), async (req, res) => {
 
         console.log('Sending messages to OpenAI:', messages);
 
-        const response = await openai.createChatCompletion({
-            model: "gpt-4",
-            messages: messages,
-            max_tokens: 1000, // Adjust this as needed
-            temperature: 1,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0
-        });
-
-        botReply = response.data.choices[0].message.content;
+        botReply = await fetchChatCompletion(messages);
         console.log('Received reply from OpenAI:', botReply);
     } catch (error) {
         console.error("Error occurred:", error);
