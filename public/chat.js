@@ -86,8 +86,11 @@ async function uploadImage(event, chatId) {
                 throw new Error(`Image upload failed: ${response.statusText}`);
             }
 
-            const data = await response.json();
-            console.log('Image upload response:', data);
+            const responseData = await response.text(); // Change to text() to capture the raw response
+            console.log('Image upload raw response:', responseData);
+            const data = JSON.parse(responseData); // Parse the raw response
+            console.log('Parsed image upload response:', data);
+
             if (data.url) {
                 displayMessage(chatId, `<img src="${data.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
                 window.conversations[chatId].push({
@@ -161,8 +164,11 @@ async function sendToServer(formData, tabId) {
             throw new Error(`Server error: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        console.log('Server response:', data);
+        const responseData = await response.text(); // Change to text() to capture the raw response
+        console.log('Server raw response:', responseData);
+        const data = JSON.parse(responseData); // Parse the raw response
+        console.log('Parsed server response:', data);
+
         displayMessage(tabId, data.reply, 'bot-message');
         window.conversations[tabId].push({
             role: 'assistant',
@@ -174,6 +180,7 @@ async function sendToServer(formData, tabId) {
         console.error('Error sending to server:', error);
     }
 }
+
 
 
 function displayMessage(tabId, message, className) {
