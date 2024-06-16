@@ -86,14 +86,22 @@ async function uploadImage(event, chatId) {
                 throw new Error(`Image upload failed: ${response.statusText}`);
             }
 
-            const responseData = await response.json();
-            console.log('Image upload response:', responseData);
+            const responseData = await response.text(); // Capture the raw response as text
+            console.log('Raw image upload response:', responseData);
 
-            if (responseData.url) {
-                displayMessage(chatId, `<img src="${responseData.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
+            let data;
+            try {
+                data = JSON.parse(responseData); // Parse the raw response as JSON
+            } catch (e) {
+                console.error('Error parsing JSON:', e);
+                throw new Error('Failed to parse JSON response');
+            }
+
+            if (data.url) {
+                displayMessage(chatId, `<img src="${data.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
                 window.conversations[chatId].push({
                     role: 'user',
-                    content: { type: 'image', url: responseData.url }
+                    content: { type: 'image', url: data.url }
                 });
             } else {
                 throw new Error('Failed to get image URL');
@@ -103,6 +111,7 @@ async function uploadImage(event, chatId) {
         }
     }
 }
+
 
 
 
@@ -163,14 +172,22 @@ async function sendToServer(formData, tabId) {
             throw new Error(`Server error: ${response.statusText}`);
         }
 
-        const responseData = await response.json();
-        console.log('Server response:', responseData);
+        const responseData = await response.text(); // Capture the raw response as text
+        console.log('Raw server response:', responseData);
 
-        if (responseData.reply) {
-            displayMessage(tabId, responseData.reply, 'bot-message');
+        let data;
+        try {
+            data = JSON.parse(responseData); // Parse the raw response as JSON
+        } catch (e) {
+            console.error('Error parsing JSON:', e);
+            throw new Error('Failed to parse JSON response');
+        }
+
+        if (data.reply) {
+            displayMessage(tabId, data.reply, 'bot-message');
             window.conversations[tabId].push({
                 role: 'assistant',
-                content: responseData.reply
+                content: data.reply
             });
         } else {
             throw new Error('Invalid response data');
