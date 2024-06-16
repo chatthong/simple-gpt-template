@@ -101,14 +101,15 @@ function handleImageUpload(event, chatId) {
     }
 }
 
-function displayImagePreview(imageUrl, chatId) {
-    const previewContainer = document.getElementById(`image-preview-${chatId}`);
-    previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
-}
-
 function clearImagePreview(chatId) {
     const previewContainer = document.getElementById(`image-preview-${chatId}`);
     previewContainer.innerHTML = '';
+}
+
+
+function displayImagePreview(imageUrl, chatId) {
+    const previewContainer = document.getElementById(`image-preview-${chatId}`);
+    previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
 }
 
 async function setAvatar(tabId) {
