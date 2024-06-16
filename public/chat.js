@@ -87,7 +87,7 @@ function handleImageUpload(event, chatId) {
                 // Add the image URL to the conversation
                 window.conversations[chatId].push({
                     role: 'user',
-                    content: { type: 'image', url: data.url }
+                    content: data.url
                 });
             } else {
                 console.error('Image upload failed');
@@ -98,6 +98,7 @@ function handleImageUpload(event, chatId) {
         });
     }
 }
+
 
 function displayImagePreview(imageUrl, chatId) {
     const previewContainer = document.getElementById(`image-preview-${chatId}`);
@@ -125,7 +126,7 @@ async function sendMessage(tabId) {
     const sendButton = document.querySelector(`#user-input-${tabId}`).nextElementSibling.nextElementSibling;
     const userInput = document.getElementById(`user-input-${tabId}`).value;
 
-    if (!userInput && !window.conversations[tabId].some(msg => msg.content.type === 'image')) return;
+    if (!userInput && !window.conversations[tabId].some(msg => msg.content && msg.content.includes('uploads/'))) return;
 
     // Disable the send button to prevent multiple clicks
     sendButton.disabled = true;
@@ -152,6 +153,7 @@ async function sendMessage(tabId) {
         sendButton.disabled = false;
     }
 }
+
 
 async function sendToServer(formData, tabId) {
     try {
@@ -200,6 +202,7 @@ function displayMessage(tabId, message, imageUrl = '', className = 'user-message
     // Update last message preview
     updateLastMessagePreview(tabId, message);
 }
+
 
 function updateLastMessagePreview(tabId, message) {
     const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
