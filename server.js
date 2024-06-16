@@ -50,7 +50,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
-app.post('/api/chat', upload.single('image'), async (req, res) => {
+app.post('/api/chat', upload.none(), async (req, res) => {
     console.log('Received chat request');
     let conversation;
     try {
@@ -60,27 +60,20 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         return res.status(400).json({ error: 'Invalid conversation format' });
     }
 
-    // Calculate the total tokens used by the conversation
-    const maxTokens = 4000; // Adjust based on the model's token limit
-    let totalTokens = 0;
-    const tokenLimitPerMessage = 1000; // Adjust based on your needs
-
-    const systemMessage = {
-        role: "system",
-        content: process.env.MASTER_PROMPT
-    };
-
-    // Ensure the conversation stays within token limits
-    conversation = conversation.filter(message => {
-        const tokens = calculateTokens(message.content);
-        if (totalTokens + tokens <= maxTokens - tokenLimitPerMessage) {
-            totalTokens += tokens;
-            return true;
+    const messages = [
+        {
+            role: "system",
+            content: process.env.MASTER_PROMPT
+        },
+        {
+            role: "user",
+            content: "สวัสดีครับ"
+        },
+        {
+            role: "assistant",
+            content: "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊"
         }
-        return false;
-    });
-
-    const messages = [systemMessage].concat(conversation);
+    ].concat(conversation);
 
     console.log('Formatted messages for OpenAI:', messages);
 
