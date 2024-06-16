@@ -43,14 +43,15 @@ app.get('/api/avatar/:seed', (req, res) => {
 });
 
 app.post('/upload', upload.single('image'), (req, res) => {
-    if (req.file) {
-        const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-        console.log('Image uploaded:', imageUrl); // Log the image URL
-        res.json({ url: imageUrl });
-    } else {
-        res.status(400).json({ error: 'No file uploaded' });
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
     }
+
+    // Generate a URL for the uploaded file
+    const imageUrl = `/uploads/${req.file.filename}`;
+    res.json({ url: imageUrl });
 });
+
 
 app.post('/api/chat', upload.none(), async (req, res) => {
     console.log('Received chat request');

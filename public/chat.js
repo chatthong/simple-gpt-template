@@ -89,40 +89,38 @@ function attachImageUploadHandler(chatId) {
 }
 
 function handleImageUpload(event, chatId) {
-    const file = event.target.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
+   const file = event.target.files[0];
+    if (!file) return;
 
-        fetch('/upload', {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const response = await fetch('/upload', {
             method: 'POST',
             body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.url) {
-                // Clear the image preview after upload
-                clearImagePreview(chatId);
-                // Add the image URL to the conversation
-                window.conversations[chatId].push({
-                    role: 'user',
-                    content: { type: 'image', url: data.url }
-                });
-                // Display the image in the chat
-                displayMessage(chatId, '', data.url, 'user-message');
-            } else {
-                console.error('Image upload failed');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
         });
+
+        if (response.ok) {
+            const data = await response.json();
+            const imageUrl = data.url; // Assume server returns the URL of the uploaded image
+            previewImage(imageUrl, chatId);
+        } else {
+            console.error('Image upload failed.');
+        }
+    } catch (error) {
+        console.error('Error uploading image:', error);
     }
 }
 
-function clearImagePreview(chatId) {
+function previewImage(imageUrl, chatId) {
     const previewContainer = document.getElementById(`image-preview-${chatId}`);
-    previewContainer.innerHTML = '';
+    const imgElement = document.createElement('img');
+    imgElement.src = imageUrl;
+    imgElement.alt = 'Image preview';
+    imgElement.style.maxWidth = '200px';
+    imgElement.style.maxHeight = '200px';
+    previewContainer.appendChild(imgElement);
 }
 
 async function setAvatar(tabId) {
