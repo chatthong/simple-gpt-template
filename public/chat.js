@@ -73,21 +73,32 @@ function addTab() {
 function handleImageChange(event, tabId) {
     const imageInput = event.target;
     const previewContainer = document.getElementById(`image-preview-${tabId}`);
-    previewContainer.innerHTML = '';
+    previewContainer.innerHTML = ''; // Clear any existing preview
 
     if (imageInput.files.length > 0) {
         const file = imageInput.files[0];
         const reader = new FileReader();
         reader.onload = function(e) {
+            const base64Image = e.target.result;
             const imgElement = document.createElement('img');
-            imgElement.src = e.target.result;
+            imgElement.src = base64Image;
             imgElement.className = 'img-thumbnail';
             imgElement.style.maxWidth = '100px';  // Adjust as needed
             previewContainer.appendChild(imgElement);
+
+            // Add to conversation with the correct format
+            window.conversations[tabId].push({
+                role: 'user',
+                content: { type: 'image', data: base64Image }
+            });
+
+            // Clear the image input after displaying the preview
+            imageInput.value = '';
         };
         reader.readAsDataURL(file);
     }
 }
+
 
 async function setAvatar(tabId) {
     try {
@@ -120,25 +131,31 @@ async function sendMessage(tabId) {
 
     document.getElementById(`user-input-${tabId}`).value = '';
 
-    const formData = new FormData();
-    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
     if (imageInput) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const base64Image = e.target.result;
-            displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
             window.conversations[tabId].push({
                 role: 'user',
-                content: { type: 'image', data: base64Image }
+                content: JSON.stringify({ type: 'image', data: base64Image })
             });
-            formData.append('image', imageInput);
+
+            // Prepare the form data
+            const formData = new FormData();
+            formData.append('conversation', JSON.stringify(window.conversations[tabId]));
+            formData.append('image', base64Image);
+
             sendToServer(formData, tabId);
         };
         reader.readAsDataURL(imageInput);
     } else {
+        // Prepare the form data
+        const formData = new FormData();
+        formData.append('conversation', JSON.stringify(window.conversations[tabId]));
         sendToServer(formData, tabId);
     }
 }
+
 
 async function sendToServer(formData, tabId) {
     const response = await fetch('/api/chat', {
