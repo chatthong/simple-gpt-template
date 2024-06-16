@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    // Fetch and set predefined avatars for each chat
     setAvatar('Chat1');
 });
 
@@ -65,6 +66,7 @@ function addTab() {
     }
     window.conversations[tabId] = [];
 
+    // Fetch and set predefined avatars for the new chat tab
     setAvatar(tabId);
 }
 
@@ -137,19 +139,23 @@ async function sendMessage(tabId) {
 }
 
 async function sendToServer(formData, tabId) {
-    const response = await fetch('/api/chat', {
-        method: 'POST',
-        body: formData
-    });
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            body: formData
+        });
 
-    const data = await response.json();
-    displayMessage(tabId, data.reply, 'bot-message');
-    window.conversations[tabId].push({
-        role: 'assistant',
-        content: data.reply
-    });
+        const data = await response.json();
+        displayMessage(tabId, data.reply, 'bot-message');
+        window.conversations[tabId].push({
+            role: 'assistant',
+            content: data.reply
+        });
 
-    document.getElementById(`image-input-${tabId}`).value = '';
+        document.getElementById(`image-input-${tabId}`).value = '';
+    } catch (error) {
+        console.error('Error sending to server:', error);
+    }
 }
 
 function displayMessage(tabId, message, className) {
