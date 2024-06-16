@@ -50,10 +50,15 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
+function calculateTokens(text) {
+    // Rough estimation: 1 token per 4 characters in the text
+    return Math.ceil(text.length / 4);
+}
+
 async function fetchChatCompletion(messages, retries = 5) {
     try {
         const response = await openai.createChatCompletion({
-            model: "gpt-4",
+            model: "gpt-4o",
             messages: messages,
             max_tokens: 1000, // Adjust this as needed
             temperature: 1,
@@ -83,21 +88,27 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         return res.status(400).json({ error: 'Invalid conversation format' });
     }
 
-    // Prepare the conversation for API request
-    const messages = [
-        {
-            role: "system",
-            content: process.env.MASTER_PROMPT
-        },
-        {
-            role: "user",
-            content: "สวัสดีครับ"
-        },
-        {
-            role: "assistant",
-            content: "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊"
+    // Calculate the total tokens used by the conversation
+    const maxTokens = 4000; // Adjust based on the model's token limit
+    let totalTokens = 0;
+    const tokenLimitPerMessage = 1000; // Adjust based on your needs
+
+    const systemMessage = {
+        role: "system",
+        content: process.env.MASTER_PROMPT
+    };
+
+    // Ensure the conversation stays within token limits
+    conversation = conversation.filter(message => {
+        const tokens = calculateTokens(message.content);
+        if (totalTokens + tokens <= maxTokens - tokenLimitPerMessage) {
+            totalTokens += tokens;
+            return true;
         }
-    ].concat(conversation);
+        return false;
+    });
+
+    const messages = [systemMessage].concat(conversation);
 
     console.log('Formatted messages for OpenAI:', messages);
 
