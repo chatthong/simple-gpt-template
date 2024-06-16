@@ -159,6 +159,7 @@ async function sendMessage(tabId) {
 }
 
 
+
 async function sendToServer(formData, tabId) {
     try {
         const response = await fetch('/api/chat', {
@@ -188,6 +189,7 @@ async function sendToServer(formData, tabId) {
         console.error('Error sending to server:', error);
     }
 }
+
 
 function displayMessage(tabId, message, className) {
     const chatContainer = document.getElementById(`messages-${tabId}`);
