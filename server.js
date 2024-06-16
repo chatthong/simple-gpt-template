@@ -50,7 +50,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
-app.post('/api/chat', upload.none(), async (req, res) => {
+app.post('/api/chat', upload.single('image'), async (req, res) => {
     console.log('Received chat request');
     let conversation;
     try {
@@ -58,6 +58,12 @@ app.post('/api/chat', upload.none(), async (req, res) => {
     } catch (error) {
         console.error('Invalid conversation format:', error);
         return res.status(400).json({ error: 'Invalid conversation format' });
+    }
+
+    // Trim the conversation to the most recent messages to stay within token limits
+    const maxMessages = 5; // Adjust based on the average message length
+    if (conversation.length > maxMessages) {
+        conversation = conversation.slice(-maxMessages);
     }
 
     let botReply = "I can only respond to text messages at the moment.";
@@ -85,9 +91,9 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         console.log('Sending messages to OpenAI:', messages);
 
         const response = await openai.createChatCompletion({
-            model: "gpt-4o",
+            model: "gpt-4",
             messages: messages,
-            max_tokens: 2000,
+            max_tokens: 1000, // Adjust this as needed
             temperature: 1,
             top_p: 1,
             frequency_penalty: 0,
@@ -106,7 +112,6 @@ app.post('/api/chat', upload.none(), async (req, res) => {
 
     res.json({ reply: botReply });
 });
-
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running at http://localhost:${port}`);
