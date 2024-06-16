@@ -82,6 +82,10 @@ async function uploadImage(event, chatId) {
                 body: formData
             });
 
+            if (!response.ok) {
+                throw new Error(`Image upload failed: ${response.statusText}`);
+            }
+
             const data = await response.json();
             console.log('Image upload response:', data);
             if (data.url) {
@@ -98,6 +102,7 @@ async function uploadImage(event, chatId) {
         }
     }
 }
+
 
 async function setAvatar(tabId) {
     try {
@@ -169,6 +174,7 @@ async function sendToServer(formData, tabId) {
         console.error('Error sending to server:', error);
     }
 }
+
 
 function displayMessage(tabId, message, className) {
     const chatContainer = document.getElementById(`messages-${tabId}`);
