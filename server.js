@@ -45,7 +45,7 @@ app.get('/api/avatar/:seed', (req, res) => {
 app.post('/upload', upload.single('image'), (req, res) => {
     if (req.file) {
         const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-        console.log('Image uploaded:', imageUrl);
+        console.log('Image uploaded:', imageUrl); // Log the image URL
         res.json({ url: imageUrl });
     } else {
         res.status(400).json({ error: 'No file uploaded' });
@@ -80,7 +80,7 @@ app.post('/api/chat', upload.none(), async (req, res) => {
             }
         ].concat(conversation);
 
-        console.log('Sending messages to OpenAI:', messages);
+        console.log('Sending messages to OpenAI:', JSON.stringify(messages, null, 2)); // Log the messages sent to OpenAI
 
         const response = await openai.createChatCompletion({
             model: "gpt-4o",
@@ -93,7 +93,7 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         });
 
         botReply = response.data.choices[0].message.content;
-        console.log('Received reply from OpenAI:', botReply);
+        console.log('Received reply from OpenAI:', JSON.stringify(response.data, null, 2)); // Log the JSON response from OpenAI
     } catch (error) {
         console.error("Error occurred:", error);
         if (error.response) {
