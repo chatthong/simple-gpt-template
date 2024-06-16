@@ -83,39 +83,27 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         return res.status(400).json({ error: 'Invalid conversation format' });
     }
 
-    // Trim the conversation to the most recent messages to stay within token limits
-    const maxTokens = 4000; // Adjust based on the model's token limit
-    let totalTokens = 0;
+    // Prepare the conversation for API request
+    const messages = [
+        {
+            role: "system",
+            content: process.env.MASTER_PROMPT
+        },
+        {
+            role: "user",
+            content: "สวัสดีครับ"
+        },
+        {
+            role: "assistant",
+            content: "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊"
+        }
+    ].concat(conversation);
 
-    conversation = conversation.reverse().filter(message => {
-        totalTokens += message.content.length / 4; // Rough estimate of tokens
-        return totalTokens < maxTokens;
-    }).reverse();
+    console.log('Formatted messages for OpenAI:', messages);
 
     let botReply = "I can only respond to text messages at the moment.";
 
     try {
-        const messages = [
-            {
-                role: "system",
-                content: process.env.MASTER_PROMPT
-            },
-            {
-                role: "user",
-                content: "สวัสดีครับ"
-            },
-            {
-                role: "assistant",
-                content: "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊"
-            },
-            {
-                role: "user",
-                content: "{{generate1}}"
-            }
-        ].concat(conversation);
-
-        console.log('Sending messages to OpenAI:', messages);
-
         botReply = await fetchChatCompletion(messages);
         console.log('Received reply from OpenAI:', botReply);
     } catch (error) {
