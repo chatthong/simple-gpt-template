@@ -101,14 +101,15 @@ function handleImageUpload(event, chatId) {
         .then(response => response.json())
         .then(data => {
             if (data.url) {
-                displayImagePreview(data.url, chatId);
+                // Clear the image preview after upload
+                clearImagePreview(chatId);
                 // Add the image URL to the conversation
                 window.conversations[chatId].push({
                     role: 'user',
                     content: { type: 'image', url: data.url }
                 });
-                // Clear the image preview after upload
-                clearImagePreview(chatId);
+                // Display the image in the chat
+                displayMessage(chatId, '', data.url, 'user-message');
             } else {
                 console.error('Image upload failed');
             }
@@ -119,15 +120,16 @@ function handleImageUpload(event, chatId) {
     }
 }
 
+function clearImagePreview(chatId) {
+    const previewContainer = document.getElementById(`image-preview-${chatId}`);
+    previewContainer.innerHTML = '';
+}
+
 function displayImagePreview(imageUrl, chatId) {
     const previewContainer = document.getElementById(`image-preview-${chatId}`);
     previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
 }
 
-function clearImagePreview(chatId) {
-    const previewContainer = document.getElementById(`image-preview-${chatId}`);
-    previewContainer.innerHTML = '';
-}
 
 async function setAvatar(tabId) {
     try {
@@ -217,7 +219,7 @@ function displayMessage(tabId, message, imageUrl = '', className = 'user-message
         messageElement.innerHTML = `<div>${message}</div>`;
     }
     if (imageUrl) {
-        messageElement.innerHTML += `<img src="${imageUrl}" class="img-thumbnail" />`;
+        messageElement.innerHTML += `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
     }
     chatContainer.appendChild(messageElement);
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -225,6 +227,7 @@ function displayMessage(tabId, message, imageUrl = '', className = 'user-message
     // Update last message preview
     updateLastMessagePreview(tabId, message);
 }
+
 
 function updateLastMessagePreview(tabId, message) {
     const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
