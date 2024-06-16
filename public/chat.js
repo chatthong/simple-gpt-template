@@ -69,14 +69,57 @@ function addTab() {
     setAvatar(tabId);
 }
 
-function handleImageChange(tabId) {
-    const imageInput = document.getElementById(`image-input-${tabId}`);
+function handleImageChange(event, tabId) {
+    const imageInput = event.target;
     if (imageInput.files.length > 0) {
-        // Image selected
-    } else {
-        // Image cleared
+        const file = imageInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Image = e.target.result;
+            const previewContainer = document.getElementById(`image-preview-${tabId}`);
+            
+            // Display the fake image preview
+            previewContainer.innerHTML = `<img src="${base64Image}" class="img-thumbnail" />`;
+
+            // You can also include the message in the chat window if desired
+            displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
+
+            // Add the image to the conversation (you can modify this part as needed)
+            window.conversations[tabId].push({
+                role: 'user',
+                content: { type: 'image', data: base64Image }
+            });
+
+            // Clear the image input after displaying the preview
+            imageInput.value = '';
+        };
+        reader.readAsDataURL(file);
     }
 }
+
+// Include other necessary JavaScript functions here, such as sendMessage, addTab, etc.
+// ...
+
+document.addEventListener('DOMContentLoaded', function() {
+    openTab('Chat1');
+    if (!window.conversations) {
+        window.conversations = {
+            Chat1: []
+        };
+    }
+
+    // Fetch and set predefined avatars for each chat
+    setAvatar('Chat1');
+
+    // Enable Enter key to send messages
+    document.getElementById('user-input-Chat1').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage('Chat1');
+            event.preventDefault();
+        }
+    });
+});
+
 
 async function setAvatar(tabId) {
     try {
