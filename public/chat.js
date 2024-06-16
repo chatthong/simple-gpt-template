@@ -100,7 +100,6 @@ async function uploadImage(event, chatId) {
             }
         } catch (error) {
             console.error('Error uploading image:', error);
-            alert('Failed to upload image. Please try again.');
         }
     }
 }
@@ -145,7 +144,7 @@ async function sendMessage(tabId) {
     const formData = new FormData();
     formData.append('conversation', JSON.stringify(window.conversations[tabId]));
     if (imageInput) {
-        formData.append('image', imageInput);
+        await uploadImage({ target: { files: [imageInput] } }, tabId);
     }
 
     try {
@@ -157,8 +156,6 @@ async function sendMessage(tabId) {
         sendButton.disabled = false;
     }
 }
-
-
 
 async function sendToServer(formData, tabId) {
     try {
@@ -189,7 +186,6 @@ async function sendToServer(formData, tabId) {
         console.error('Error sending to server:', error);
     }
 }
-
 
 function displayMessage(tabId, message, className) {
     const chatContainer = document.getElementById(`messages-${tabId}`);
