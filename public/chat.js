@@ -144,7 +144,7 @@ async function sendMessage(tabId) {
     const formData = new FormData();
     formData.append('conversation', JSON.stringify(window.conversations[tabId]));
     if (imageInput) {
-        await uploadImage({ target: { files: [imageInput] } }, tabId);
+        formData.append('image', imageInput);
     }
 
     try {
@@ -156,6 +156,7 @@ async function sendMessage(tabId) {
         sendButton.disabled = false;
     }
 }
+
 
 async function sendToServer(formData, tabId) {
     try {
