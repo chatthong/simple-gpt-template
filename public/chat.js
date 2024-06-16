@@ -90,11 +90,7 @@ async function uploadImage(event, chatId) {
             console.log('Image upload response:', data);
 
             if (data.url) {
-                displayMessage(chatId, `<img src="${data.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
-                window.conversations[chatId].push({
-                    role: 'user',
-                    content: { type: 'image', url: data.url }
-                });
+                displayImagePreview(data.url, chatId);
             } else {
                 throw new Error('Failed to get image URL');
             }
@@ -102,6 +98,11 @@ async function uploadImage(event, chatId) {
             console.error('Error uploading image:', error);
         }
     }
+}
+
+function displayImagePreview(imageUrl, chatId) {
+    const previewContainer = document.getElementById(`image-preview-${chatId}`);
+    previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
 }
 
 async function setAvatar(tabId) {
@@ -131,29 +132,58 @@ async function sendMessage(tabId) {
     // Disable the send button to prevent multiple clicks
     sendButton.disabled = true;
 
-    if (userInput) {
-        displayMessage(tabId, userInput, 'user-message');
+    let imageUrl = '';
+    if (imageInput) {
+        imageUrl = await uploadImageAndGetUrl(imageInput);
+    }
+
+    if (userInput || imageUrl) {
+        displayMessage(tabId, userInput, imageUrl);
         window.conversations[tabId].push({
             role: 'user',
-            content: userInput
+            content: userInput,
+            imageUrl: imageUrl
         });
+
+        const formData = new FormData();
+        formData.append('conversation', JSON.stringify(window.conversations[tabId]));
+
+        try {
+            await sendToServer(formData, tabId);
+        } catch (error) {
+            console.error('Error sending message to server:', error);
+        } finally {
+            // Re-enable the send button after the message has been sent
+            sendButton.disabled = false;
+        }
     }
 
     document.getElementById(`user-input-${tabId}`).value = '';
+}
 
+async function uploadImageAndGetUrl(file) {
     const formData = new FormData();
-    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
-    if (imageInput) {
-        await uploadImage({ target: { files: [imageInput] } }, tabId);
-    }
+    formData.append('image', file);
 
     try {
-        await sendToServer(formData, tabId);
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`Image upload failed: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (data.url) {
+            return data.url;
+        } else {
+            throw new Error('Failed to get image URL');
+        }
     } catch (error) {
-        console.error('Error sending message to server:', error);
-    } finally {
-        // Re-enable the send button after the message has been sent
-        sendButton.disabled = false;
+        console.error('Error uploading image:', error);
+        return '';
     }
 }
 
@@ -172,7 +202,7 @@ async function sendToServer(formData, tabId) {
         console.log('Server response:', data);
 
         if (data.reply) {
-            displayMessage(tabId, data.reply, 'bot-message');
+            displayMessage(tabId, data.reply, '', 'bot-message');
             window.conversations[tabId].push({
                 role: 'assistant',
                 content: data.reply
@@ -187,11 +217,16 @@ async function sendToServer(formData, tabId) {
     }
 }
 
-function displayMessage(tabId, message, className) {
+function displayMessage(tabId, message, imageUrl, className = 'user-message') {
     const chatContainer = document.getElementById(`messages-${tabId}`);
     const messageElement = document.createElement('div');
     messageElement.className = `chat-message ${className}`;
-    messageElement.innerHTML = message;
+    if (message) {
+        messageElement.innerHTML = `<div>${message}</div>`;
+    }
+    if (imageUrl) {
+        messageElement.innerHTML += `<img src="${imageUrl}" class="img-thumbnail" />`;
+    }
     chatContainer.appendChild(messageElement);
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
