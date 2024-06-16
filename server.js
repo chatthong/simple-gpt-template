@@ -91,9 +91,9 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
         console.log('Sending messages to OpenAI:', messages);
 
         const response = await openai.createChatCompletion({
-            model: "gpt-4",
+            model: "gpt-4o",
             messages: messages,
-            max_tokens: 1000, // Adjust this as needed
+            max_tokens: 2000, // Adjust this as needed
             temperature: 1,
             top_p: 1,
             frequency_penalty: 0,
