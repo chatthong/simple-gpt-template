@@ -228,7 +228,6 @@ function displayMessage(tabId, message, imageUrl, className = 'user-message') {
     updateLastMessagePreview(tabId, message);
 }
 
-// Function to update last message preview
 function updateLastMessagePreview(tabId, message) {
     const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
     const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"] small`);
@@ -246,5 +245,4 @@ function closeChat(tabId) {
     if (chatListItem) {
         chatListItem.remove();
     }
-    // Optionally, switch to another tab if needed
 }
