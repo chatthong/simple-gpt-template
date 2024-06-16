@@ -89,6 +89,8 @@ function handleImageUpload(event, chatId) {
                     role: 'user',
                     content: { type: 'image', url: data.url }
                 });
+                // Clear the image preview after upload
+                clearImagePreview(chatId);
             } else {
                 console.error('Image upload failed');
             }
@@ -102,6 +104,11 @@ function handleImageUpload(event, chatId) {
 function displayImagePreview(imageUrl, chatId) {
     const previewContainer = document.getElementById(`image-preview-${chatId}`);
     previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
+}
+
+function clearImagePreview(chatId) {
+    const previewContainer = document.getElementById(`image-preview-${chatId}`);
+    previewContainer.innerHTML = '';
 }
 
 async function setAvatar(tabId) {
