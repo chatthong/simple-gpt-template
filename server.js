@@ -50,29 +50,6 @@ app.post('/upload', upload.single('image'), (req, res) => {
     }
 });
 
-async function fetchChatCompletion(messages, retries = 5) {
-    try {
-        const response = await openai.createChatCompletion({
-            model: "gpt-4o",
-            messages: messages,
-            max_tokens: 1000, // Adjust this as needed
-            temperature: 1,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0
-        });
-        return response.data.choices[0].message.content;
-    } catch (error) {
-        if (error.response && error.response.status === 429 && retries > 0) {
-            console.warn(`Rate limit hit, retrying... (${retries} retries left)`);
-            await new Promise(resolve => setTimeout(resolve, 2000 * (5 - retries))); // Exponential backoff
-            return fetchChatCompletion(messages, retries - 1);
-        } else {
-            throw error;
-        }
-    }
-}
-
 app.post('/api/chat', upload.none(), async (req, res) => {
     console.log('Received chat request');
     let conversation;
@@ -83,28 +60,46 @@ app.post('/api/chat', upload.none(), async (req, res) => {
         return res.status(400).json({ error: 'Invalid conversation format' });
     }
 
-    // Prepare the conversation for API request
-    const messages = [
-        {
-            role: "system",
-            content: process.env.MASTER_PROMPT
-        },
-        {
-            role: "user",
-            content: "สวัสดีครับ"
-        },
-        {
-            role: "assistant",
-            content: "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊"
-        }
-    ].concat(conversation);
+    // Trim the conversation to the most recent messages to stay within token limits
+    const maxTokens = 4000; // Adjust based on the model's token limit
+    let totalTokens = 0;
 
-    console.log('Formatted messages for OpenAI:', messages);
+    conversation = conversation.reverse().filter(message => {
+        totalTokens += message.content.length / 4; // Rough estimate of tokens
+        return totalTokens < maxTokens;
+    }).reverse();
 
     let botReply = "I can only respond to text messages at the moment.";
 
     try {
-        botReply = await fetchChatCompletion(messages);
+        const messages = [
+            {
+                role: "system",
+                content: process.env.MASTER_PROMPT
+            },
+            {
+                role: "user",
+                content: "สวัสดีครับ"
+            },
+            {
+                role: "assistant",
+                content: "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊"
+            }
+        ].concat(conversation);
+
+        console.log('Sending messages to OpenAI:', messages);
+
+        const response = await openai.createChatCompletion({
+            model: "gpt-4o",
+            messages: messages,
+            max_tokens: 2000, // Adjust this as needed
+            temperature: 1,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0
+        });
+
+        botReply = response.data.choices[0].message.content;
         console.log('Received reply from OpenAI:', botReply);
     } catch (error) {
         console.error("Error occurred:", error);

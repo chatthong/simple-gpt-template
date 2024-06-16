@@ -70,37 +70,24 @@ function addTab() {
     setAvatar(tabId);
 }
 
-async function uploadImage(event, chatId) {
-    const file = event.target.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
+async function uploadImage(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
 
-        try {
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
+    const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+    });
 
-            if (!response.ok) {
-                throw new Error(`Image upload failed: ${response.statusText}`);
-            }
+    if (!response.ok) {
+        throw new Error(`Image upload failed: ${response.statusText}`);
+    }
 
-            const data = await response.json();
-            console.log('Image upload response:', data);
-
-            if (data.url) {
-                displayMessage(chatId, `<img src="${data.url}" alt="Image" class="img-thumbnail" />`, 'user-message');
-                window.conversations[chatId].push({
-                    role: 'user',
-                    content: { type: 'image', url: data.url }
-                });
-            } else {
-                throw new Error('Failed to get image URL');
-            }
-        } catch (error) {
-            console.error('Error uploading image:', error);
-        }
+    const data = await response.json();
+    if (data.url) {
+        return data.url;
+    } else {
+        throw new Error('Failed to get image URL');
     }
 }
 
@@ -122,10 +109,33 @@ async function setAvatar(tabId) {
 }
 
 async function sendMessage(tabId) {
+    const sendButton = document.querySelector(`#user-input-${tabId}`).nextElementSibling.nextElementSibling;
     const userInput = document.getElementById(`user-input-${tabId}`).value;
     const imageInput = document.getElementById(`image-input-${tabId}`).files[0];
 
     if (!userInput && !imageInput) return;
+
+    // Disable the send button to prevent multiple clicks
+    sendButton.disabled = true;
+
+    const formData = new FormData();
+    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
+
+    if (imageInput) {
+        try {
+            const imageUrl = await uploadImage(imageInput);
+            displayMessage(tabId, `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`, 'user-message');
+            window.conversations[tabId].push({
+                role: 'user',
+                content: { type: 'image', url: imageUrl }
+            });
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Failed to upload image. Please try again.');
+            sendButton.disabled = false;
+            return;
+        }
+    }
 
     if (userInput) {
         displayMessage(tabId, userInput, 'user-message');
@@ -137,18 +147,16 @@ async function sendMessage(tabId) {
 
     document.getElementById(`user-input-${tabId}`).value = '';
 
-    const formData = new FormData();
-    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
-    if (imageInput) {
-        await uploadImage({ target: { files: [imageInput] } }, tabId);
-    }
-
     try {
         await sendToServer(formData, tabId);
     } catch (error) {
         console.error('Error sending message to server:', error);
+    } finally {
+        // Re-enable the send button after the message has been sent
+        sendButton.disabled = false;
     }
 }
+
 
 
 async function sendToServer(formData, tabId) {
@@ -174,8 +182,6 @@ async function sendToServer(formData, tabId) {
         } else {
             throw new Error('Invalid response data');
         }
-
-        document.getElementById(`image-input-${tabId}`).value = '';
     } catch (error) {
         console.error('Error sending to server:', error);
     }
@@ -193,7 +199,7 @@ function displayMessage(tabId, message, className) {
     updateLastMessagePreview(tabId, message);
 }
 
-// Function to update last message preview
+
 function updateLastMessagePreview(tabId, message) {
     const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
     const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"] small`);
