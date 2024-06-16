@@ -143,23 +143,27 @@ async function sendMessage(tabId) {
 }
 
 async function sendToServer(formData, tabId) {
-    const response = await fetch('/api/chat', {
-        method: 'POST',
-        body: formData
-    });
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            body: formData
+        });
 
-    if (!response.ok) {
-        throw new Error(`Server error: ${response.statusText}`);
+        if (!response.ok) {
+            throw new Error(`Server error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        displayMessage(tabId, data.reply, 'bot-message');
+        window.conversations[tabId].push({
+            role: 'assistant',
+            content: data.reply
+        });
+
+        document.getElementById(`image-input-${tabId}`).value = '';
+    } catch (error) {
+        console.error('Error sending to server:', error);
     }
-
-    const data = await response.json();
-    displayMessage(tabId, data.reply, 'bot-message');
-    window.conversations[tabId].push({
-        role: 'assistant',
-        content: data.reply
-    });
-
-    document.getElementById(`image-input-${tabId}`).value = '';
 }
 
 function displayMessage(tabId, message, className) {
