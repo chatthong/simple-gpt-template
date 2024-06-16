@@ -34,64 +34,20 @@
                     <div class="chat-content" id="messages-Chat1">
                         <!-- Chat messages will be dynamically added here -->
                     </div>
-                        <div class="input-group mt-3">
-                            <input type="text" class="form-control" id="user-input-Chat1" placeholder="Type something...">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-Chat1').click()">Upload</button>
-                                <input type="file" id="image-input-Chat1" accept="image/*" style="display: none;" onchange="handleImageChange(event, 'Chat1')">
-                                <button class="btn btn-primary" onclick="sendMessage('Chat1')" type="button">Send</button>
-                            </div>
-                            <div id="image-preview-Chat1" class="mt-2"></div> <!-- Add this line -->
+                    <div class="input-group mt-3">
+                        <input type="text" class="form-control" id="user-input-Chat1" placeholder="Type something...">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-Chat1').click()">Upload</button>
+                            <input type="file" id="image-input-Chat1" accept="image/*" style="display: none;" onchange="handleImageChange(event, 'Chat1')">
+                            <button class="btn btn-primary" onclick="sendMessage('Chat1')" type="button">Send</button>
                         </div>
+                        <div id="image-preview-Chat1" class="mt-2"></div> <!-- Add this line -->
+                    </div>
                 </div>
                 <!-- More chat windows will be dynamically added here -->
             </div>
         </div>
     </div>
-    <script>
-        function handleImageChange(event, tabId) {
-            const imageInput = event.target;
-            if (imageInput.files.length > 0) {
-                const file = imageInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64Image = e.target.result;
-                    displayMessage(tabId, `<img src="${base64Image}" class="img-thumbnail" />`, 'user-message');
-                    window.conversations[tabId].push({
-                        role: 'user',
-                        content: { type: 'image', data: base64Image }
-                    });
-
-                    // Clear the image input after displaying the preview
-                    imageInput.value = '';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Include other necessary JavaScript functions here, such as sendMessage, addTab, etc.
-        // ...
-
-        document.addEventListener('DOMContentLoaded', function() {
-            openTab('Chat1');
-            if (!window.conversations) {
-                window.conversations = {
-                    Chat1: []
-                };
-            }
-
-            // Fetch and set predefined avatars for each chat
-            setAvatar('Chat1');
-
-            // Enable Enter key to send messages
-            document.getElementById('user-input-Chat1').addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    sendMessage('Chat1');
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
     <script src="chat.js"></script>
 </body>
 </html>
