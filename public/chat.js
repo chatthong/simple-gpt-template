@@ -84,6 +84,11 @@ function handleImageUpload(event, chatId) {
         .then(data => {
             if (data.url) {
                 displayImagePreview(data.url, chatId);
+                // Add the image URL to the conversation
+                window.conversations[chatId].push({
+                    role: 'user',
+                    content: { type: 'image', url: data.url }
+                });
             } else {
                 console.error('Image upload failed');
             }
@@ -119,65 +124,32 @@ async function setAvatar(tabId) {
 async function sendMessage(tabId) {
     const sendButton = document.querySelector(`#user-input-${tabId}`).nextElementSibling.nextElementSibling;
     const userInput = document.getElementById(`user-input-${tabId}`).value;
-    const imageInput = document.getElementById(`image-input-${tabId}`).files[0];
 
-    if (!userInput && !imageInput) return;
+    if (!userInput && !window.conversations[tabId].some(msg => msg.content.type === 'image')) return;
 
     // Disable the send button to prevent multiple clicks
     sendButton.disabled = true;
 
-    let imageUrl = '';
-    if (imageInput) {
-        imageUrl = await uploadImageAndGetUrl(imageInput);
-    }
-
-    if (userInput || imageUrl) {
-        displayMessage(tabId, userInput, imageUrl);
+    if (userInput) {
+        displayMessage(tabId, userInput, '', 'user-message');
         window.conversations[tabId].push({
             role: 'user',
-            content: userInput,
-            imageUrl: imageUrl
+            content: userInput
         });
-
-        const formData = new FormData();
-        formData.append('conversation', JSON.stringify(window.conversations[tabId]));
-
-        try {
-            await sendToServer(formData, tabId);
-        } catch (error) {
-            console.error('Error sending message to server:', error);
-        } finally {
-            // Re-enable the send button after the message has been sent
-            sendButton.disabled = false;
-        }
     }
 
     document.getElementById(`user-input-${tabId}`).value = '';
-}
 
-async function uploadImageAndGetUrl(file) {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('conversation', JSON.stringify(window.conversations[tabId]));
 
     try {
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!response.ok) {
-            throw new Error(`Image upload failed: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        if (data.url) {
-            return data.url;
-        } else {
-            throw new Error('Failed to get image URL');
-        }
+        await sendToServer(formData, tabId);
     } catch (error) {
-        console.error('Error uploading image:', error);
-        return '';
+        console.error('Error sending message to server:', error);
+    } finally {
+        // Re-enable the send button after the message has been sent
+        sendButton.disabled = false;
     }
 }
 
@@ -205,13 +177,14 @@ async function sendToServer(formData, tabId) {
             throw new Error('Invalid response data');
         }
 
-        document.getElementById(`image-input-${tabId}`).value = '';
+        // Clear the image preview after sending the message
+        document.getElementById(`image-preview-${tabId}`).innerHTML = '';
     } catch (error) {
         console.error('Error sending to server:', error);
     }
 }
 
-function displayMessage(tabId, message, imageUrl, className = 'user-message') {
+function displayMessage(tabId, message, imageUrl = '', className = 'user-message') {
     const chatContainer = document.getElementById(`messages-${tabId}`);
     const messageElement = document.createElement('div');
     messageElement.className = `chat-message ${className}`;

@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
