@@ -70,6 +70,7 @@ function addTab() {
     setAvatar(tabId);
 }
 
+
 function handleImageUpload(event, chatId) {
     const file = event.target.files[0];
     if (file) {
@@ -87,7 +88,7 @@ function handleImageUpload(event, chatId) {
                 // Add the image URL to the conversation
                 window.conversations[chatId].push({
                     role: 'user',
-                    content: data.url
+                    content: { type: 'image', url: data.url }
                 });
             } else {
                 console.error('Image upload failed');
@@ -98,6 +99,7 @@ function handleImageUpload(event, chatId) {
         });
     }
 }
+
 
 
 function displayImagePreview(imageUrl, chatId) {
