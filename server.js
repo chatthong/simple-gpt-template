@@ -59,40 +59,39 @@ app.post('/api/chat', upload.single('image'), async (req, res) => {
 
       fs.unlinkSync(imagePath);
     }
-const response = await openai.createChatCompletion({
-  model: "gpt-4o",
-  messages: [
-    {
-      role: "system",
-      content: [
+
+    const response = await openai.createChatCompletion({
+      model: "gpt-4o",
+      messages: [
         {
-          text: "พูดภาษาไทย",
-          type: "text"
-        }
-      ]
-    },
-    ...conversation
-  ],
-  max_tokens: 1000,
-  temperature: 1,
-  top_p: 1,
-  frequency_penalty: 0,
-  presence_penalty: 0
-});
+          role: "system",
+          content: [
+            {
+              text: "XXX",
+              type: "text"
+            }
+          ]
+        },
+        ...conversation
+      ],
+      max_tokens: 1000,
+      temperature: 1,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0
+    });
 
-let botReply;
-try {
-  botReply = response.data.choices[0].message.content;
-} catch (error) {
-  console.error("Error occurred:", error);
-  if (error.response) {
-    console.error("API response error:", error.response.data);
+    botReply = response.data.choices[0].message.content;
+  } catch (error) {
+    console.error("Error occurred:", error);
+    if (error.response) {
+      console.error("API response error:", error.response.data);
+    }
+    botReply = 'An error occurred while processing your request.';
   }
-  botReply = 'An error occurred while processing your request.';
-}
 
-res.json({ reply: botReply });
-
+  res.json({ reply: botReply });
+});
 
 // Serve the React app
 app.use(express.static(path.join(__dirname, 'build')));
