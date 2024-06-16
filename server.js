@@ -51,7 +51,13 @@ app.post('/upload', upload.single('image'), (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
   console.log('Received chat request');
-  const conversation = JSON.parse(req.body.conversation);
+  let conversation;
+  try {
+    conversation = JSON.parse(req.body.conversation);
+  } catch (error) {
+    return res.status(400).send('Invalid conversation format.');
+  }
+
   let botReply = "I can only respond to text messages at the moment.";
 
   try {

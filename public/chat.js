@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // Fetch and set predefined avatars for each chat
     setAvatar('Chat1');
 });
 
@@ -66,7 +65,6 @@ function addTab() {
     }
     window.conversations[tabId] = [];
 
-    // Fetch and set predefined avatars for the new chat tab
     setAvatar(tabId);
 }
 
@@ -100,10 +98,14 @@ async function setAvatar(tabId) {
     try {
         const avatarUrl = `/images/1.jpg`;
         const chatItem = document.querySelector(`#chatTabs li .ml-3[onclick="openTab('${tabId}')"]`);
-        chatItem.innerHTML = `
-            <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
-            ${chatItem.innerHTML}
-        `;
+        if (chatItem) {
+            chatItem.innerHTML = `
+                <img src="${avatarUrl}" alt="Avatar" class="avatar mr-2">
+                ${chatItem.innerHTML}
+            `;
+        } else {
+            console.error('Chat item not found for tabId:', tabId);
+        }
     } catch (error) {
         console.error('Error fetching avatar:', error);
     }
