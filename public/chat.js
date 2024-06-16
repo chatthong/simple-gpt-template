@@ -70,7 +70,6 @@ function addTab() {
     setAvatar(tabId);
 }
 
-
 function handleImageUpload(event, chatId) {
     const file = event.target.files[0];
     if (file) {
@@ -100,8 +99,6 @@ function handleImageUpload(event, chatId) {
     }
 }
 
-
-
 function displayImagePreview(imageUrl, chatId) {
     const previewContainer = document.getElementById(`image-preview-${chatId}`);
     previewContainer.innerHTML = `<img src="${imageUrl}" alt="Image" class="img-thumbnail" />`;
@@ -128,7 +125,7 @@ async function sendMessage(tabId) {
     const sendButton = document.querySelector(`#user-input-${tabId}`).nextElementSibling.nextElementSibling;
     const userInput = document.getElementById(`user-input-${tabId}`).value;
 
-    if (!userInput && !window.conversations[tabId].some(msg => msg.content && msg.content.includes('uploads/'))) return;
+    if (!userInput && !window.conversations[tabId].some(msg => msg.content && msg.content.type === 'image')) return;
 
     // Disable the send button to prevent multiple clicks
     sendButton.disabled = true;
@@ -155,7 +152,6 @@ async function sendMessage(tabId) {
         sendButton.disabled = false;
     }
 }
-
 
 async function sendToServer(formData, tabId) {
     try {
@@ -204,7 +200,6 @@ function displayMessage(tabId, message, imageUrl = '', className = 'user-message
     // Update last message preview
     updateLastMessagePreview(tabId, message);
 }
-
 
 function updateLastMessagePreview(tabId, message) {
     const previewText = message.length > 20 ? message.substring(0, 20) + '...' : message;
