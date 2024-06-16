@@ -50,7 +50,7 @@ function addTab() {
                 <input type="text" class="form-control" id="user-input-${tabId}" placeholder="Type something...">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" onclick="document.getElementById('image-input-${tabId}').click()">Upload</button>
-                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="uploadImage(event, '${tabId}')">
+                    <input type="file" id="image-input-${tabId}" accept="image/*" style="display: none;" onchange="handleImageUpload(event, '${tabId}')">
                     <button class="btn btn-primary" onclick="sendMessage('${tabId}')" type="button">Send</button>
                 </div>
                 <div id="image-preview-${tabId}" class="mt-2"></div>
@@ -70,33 +70,27 @@ function addTab() {
     setAvatar(tabId);
 }
 
-async function uploadImage(event, chatId) {
+function handleImageUpload(event, chatId) {
     const file = event.target.files[0];
     if (file) {
         const formData = new FormData();
         formData.append('image', file);
 
-        try {
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error(`Image upload failed: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Image upload response:', data);
-
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
             if (data.url) {
                 displayImagePreview(data.url, chatId);
             } else {
-                throw new Error('Failed to get image URL');
+                console.error('Image upload failed');
             }
-        } catch (error) {
-            console.error('Error uploading image:', error);
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 }
 
