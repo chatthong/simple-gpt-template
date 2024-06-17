@@ -27,12 +27,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Ensure the configuration object is created correctly
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+// Add a debug log to trace Configuration class usage
+console.log('Initializing OpenAI configuration...');
+console.log('API Key:', process.env.OPENAI_API_KEY);
 
-const openai = new OpenAIApi(configuration);
+try {
+    const configuration = new Configuration({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openai = new OpenAIApi(configuration);
+    console.log('OpenAI configuration initialized successfully.');
+} catch (error) {
+    console.error('Error initializing OpenAI configuration:', error);
+}
 
 app.get('/api/avatar/:seed', (req, res) => {
     const seed = req.params.seed;
