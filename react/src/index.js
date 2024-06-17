@@ -1,6 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './styles.css';
+import { NextUIProvider } from '@nextui-org/react';
 import App from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <NextUIProvider>
+    <App />
+  </NextUIProvider>,
+  document.getElementById('root')
+);
