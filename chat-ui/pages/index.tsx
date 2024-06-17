@@ -33,59 +33,103 @@ export default function IndexPage() {
       <div className="flex w-full flex-col">
         <Tabs aria-label="Options" isVertical={isVertical}>
           <Tab key="photos" title="Photos">
-            <Card>
+             <Card className="max-w-[400px]">
+              <CardHeader className="flex gap-3">
+                <Image
+                  alt="nextui logo"
+                  height={40}
+                  radius="sm"
+                  src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                  width={40}
+                />
+                <div className="flex flex-col">
+                  <p className="text-md">NextUI</p>
+                  <p className="text-small text-default-500">nextui.org</p>
+                </div>
+              </CardHeader>
+              <Divider/>
               <CardBody>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <p>Make beautiful websites regardless of your design experience.</p>
               </CardBody>
-            </Card>  
+              <Divider/>
+              <CardFooter>
+                <Link
+                  isExternal
+                  showAnchorIcon
+                  href="https://github.com/nextui-org/nextui"
+                >
+                  Visit source code on GitHub.
+                </Link>
+              </CardFooter>
+            </Card>
           </Tab>
           <Tab key="music" title="Music">
-            <Card>
-              <CardBody>
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              </CardBody>
-            </Card>  
+           <Card className="max-w-[400px]">
+            <CardHeader className="flex gap-3">
+              <Image
+                alt="nextui logo"
+                height={40}
+                radius="sm"
+                src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                width={40}
+              />
+              <div className="flex flex-col">
+                <p className="text-md">NextUI</p>
+                <p className="text-small text-default-500">nextui.org</p>
+              </div>
+            </CardHeader>
+            <Divider/>
+            <CardBody>
+              <p>Make beautiful websites regardless of your design experience.</p>
+            </CardBody>
+            <Divider/>
+            <CardFooter>
+              <Link
+                isExternal
+                showAnchorIcon
+                href="https://github.com/nextui-org/nextui"
+              >
+                Visit source code on GitHub.
+              </Link>
+            </CardFooter>
+          </Card>
           </Tab>
           <Tab key="videos" title="Videos">
-            <Card>
-              <CardBody>
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-              </CardBody>
-            </Card>  
+           <Card className="max-w-[400px]">
+            <CardHeader className="flex gap-3">
+              <Image
+                alt="nextui logo"
+                height={40}
+                radius="sm"
+                src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                width={40}
+              />
+              <div className="flex flex-col">
+                <p className="text-md">NextUI</p>
+                <p className="text-small text-default-500">nextui.org</p>
+              </div>
+            </CardHeader>
+            <Divider/>
+            <CardBody>
+              <p>Make beautiful websites regardless of your design experience.</p>
+            </CardBody>
+            <Divider/>
+            <CardFooter>
+              <Link
+                isExternal
+                showAnchorIcon
+                href="https://github.com/nextui-org/nextui"
+              >
+                Visit source code on GitHub.
+              </Link>
+            </CardFooter>
+          </Card>
           </Tab>
         </Tabs>
       </div>
     </div>
 
-      <Card className="max-w-[400px]">
-      <CardHeader className="flex gap-3">
-        <Image
-          alt="nextui logo"
-          height={40}
-          radius="sm"
-          src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-          width={40}
-        />
-        <div className="flex flex-col">
-          <p className="text-md">NextUI</p>
-          <p className="text-small text-default-500">nextui.org</p>
-        </div>
-      </CardHeader>
-      <Divider/>
-      <CardBody>
-        <p>Make beautiful websites regardless of your design experience.</p>
-      </CardBody>
-      <Divider/>
-      <CardFooter>
-        <Link
-          isExternal
-          showAnchorIcon
-          href="https://github.com/nextui-org/nextui"
-        >
-          Visit source code on GitHub.
-        </Link>
-      </CardFooter>
-    </Card>
+ 
 
 
 
