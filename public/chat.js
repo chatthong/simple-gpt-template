@@ -91,7 +91,6 @@ function attachImageUploadHandler(chatId) {
 async function handleImageUpload(event, chatId) {
     const file = event.target.files[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append('image', file);
 
