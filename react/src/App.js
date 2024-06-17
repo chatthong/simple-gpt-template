@@ -1,5 +1,5 @@
 import React from 'react';
-import { NextUIProvider, Container, Grid, Card, Text, Tabs, Tab } from '@nextui-org/react';
+import { NextUIProvider, Container, Grid, Card, Text, Tabs } from '@nextui-org/react';
 import ChatContainer from './components/ChatContainer';
 
 const App = () => {
@@ -18,15 +18,15 @@ const App = () => {
             <Card>
               <Card.Body>
                 <Tabs initialValue="1">
-                  <Tab key="1" title="Chat 1">
+                  <Tabs.Item key="1" title="Chat 1">
                     <Text>Chat 1 content</Text>
-                  </Tab>
-                  <Tab key="2" title="Chat 2">
+                  </Tabs.Item>
+                  <Tabs.Item key="2" title="Chat 2">
                     <Text>Chat 2 content</Text>
-                  </Tab>
-                  <Tab key="3" title="Chat 3">
+                  </Tabs.Item>
+                  <Tabs.Item key="3" title="Chat 3">
                     <Text>Chat 3 content</Text>
-                  </Tab>
+                  </Tabs.Item>
                 </Tabs>
               </Card.Body>
             </Card>
