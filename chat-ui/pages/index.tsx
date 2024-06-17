@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
+import { Tabs, Tab, Switch, Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
@@ -7,6 +7,9 @@ import { GithubIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
 
 export default function IndexPage() {
+
+  const [isVertical, setIsVertical] = React.useState(true);
+
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -23,7 +26,38 @@ export default function IndexPage() {
         </div>
 
 
-                   <Card className="max-w-[400px]">
+    <div className="flex flex-col px-4">
+      <Switch className="mb-4" isSelected={isVertical} onValueChange={setIsVertical}>
+        Vertical
+      </Switch>
+      <div className="flex w-full flex-col">
+        <Tabs aria-label="Options" isVertical={isVertical}>
+          <Tab key="photos" title="Photos">
+            <Card>
+              <CardBody>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </CardBody>
+            </Card>  
+          </Tab>
+          <Tab key="music" title="Music">
+            <Card>
+              <CardBody>
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+              </CardBody>
+            </Card>  
+          </Tab>
+          <Tab key="videos" title="Videos">
+            <Card>
+              <CardBody>
+                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </CardBody>
+            </Card>  
+          </Tab>
+        </Tabs>
+      </div>
+    </div>
+
+      <Card className="max-w-[400px]">
       <CardHeader className="flex gap-3">
         <Image
           alt="nextui logo"
@@ -52,6 +86,7 @@ export default function IndexPage() {
         </Link>
       </CardFooter>
     </Card>
+
 
 
         <div className="flex gap-3">
