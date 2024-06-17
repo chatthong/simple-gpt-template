@@ -107,7 +107,7 @@ app.post('/api/chat', upload.none(), async (req, res) => {
 
 // Serve the React app
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, 'react/build', 'index.html'));
 });
 
 app.listen(port, '0.0.0.0', () => {
