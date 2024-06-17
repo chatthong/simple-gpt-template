@@ -34,11 +34,15 @@ const ChatWindow = ({ selectedChatId }) => {
       <div className="p-3 tabcontent">
         <h5>Chat #{selectedChatId}</h5>
         <div className="chat-content" id={`messages-${selectedChatId}`}>
-          {messages.map((message, index) => (
-            <div key={index} className={`chat-message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}>
-              {message.content}
-            </div>
-          ))}
+          {messages.length > 0 ? (
+            messages.map((message, index) => (
+              <div key={index} className={`chat-message ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}>
+                {message.content}
+              </div>
+            ))
+          ) : (
+            <div>No messages yet.</div>
+          )}
         </div>
         <div className="input-group mt-3">
           <input
