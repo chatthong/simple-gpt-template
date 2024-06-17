@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const { Configuration, OpenAIApi } = require('openai');
+const { constructor, OpenAIApi } = require('openai');
 const fs = require('fs');
 const path = require('path');
 
@@ -27,9 +27,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Ensure the configuration object is created correctly
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
+
 const openai = new OpenAIApi(configuration);
 
 app.get('/api/avatar/:seed', (req, res) => {
