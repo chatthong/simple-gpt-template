@@ -1,4 +1,4 @@
-import { Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
@@ -39,7 +39,7 @@ export default function IndexPage() {
         </Link>
       </CardFooter>
     </Card>
-    
+
         <div className="inline-block max-w-lg text-center justify-center">
           <h1 className={title()}>Make&nbsp;</h1>
           <h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
