@@ -1,51 +1,88 @@
-import React from "react";
-import { Card, CardHeader, CardBody, CardFooter, Input, Button, Spacer, Container } from "@nextui-org/react";
+import { Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
+
+import { siteConfig } from "@/config/site";
+import { title, subtitle } from "@/components/primitives";
+import { GithubIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
 
 export default function IndexPage() {
   return (
     <DefaultLayout>
-      <Container>
-        <div className="max-w-full gap-2 grid grid-cols-12 px-8 h-screen">
-          {/* Chat Tabs on the left */}
-          <div className="col-span-2 flex flex-col gap-4">
-            <Card clickable>
-              <CardHeader>
-                <h4>Chat 1</h4>
-              </CardHeader>
-            </Card>
-            <Card clickable>
-              <CardHeader>
-                <h4>Chat 2</h4>
-              </CardHeader>
-            </Card>
-            <Card clickable>
-              <CardHeader>
-                <h4>Chat 3</h4>
-              </CardHeader>
-            </Card>
-          </div>
+      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
 
-          {/* Chat Box on the right */}
-          <div className="col-span-10 flex flex-col gap-4">
-            <Card className="flex-1">
-              <CardHeader>
-                <h3>ChatGPT</h3>
-              </CardHeader>
-              <CardBody style={{ flex: 1 }}>
-                <p>This is a chat message.</p>
-                {/* Add more chat messages here */}
-              </CardBody>
-              <CardFooter>
-                <div className="flex w-full gap-2">
-                  <Input clearable fullWidth size="lg" placeholder="Type a message" />
-                  <Button auto>Send</Button>
-                </div>
-              </CardFooter>
-            </Card>
-          </div>
+         <Card className="max-w-[400px]">
+      <CardHeader className="flex gap-3">
+        <Image
+          alt="nextui logo"
+          height={40}
+          radius="sm"
+          src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+          width={40}
+        />
+        <div className="flex flex-col">
+          <p className="text-md">NextUI</p>
+          <p className="text-small text-default-500">nextui.org</p>
         </div>
-      </Container>
+      </CardHeader>
+      <Divider/>
+      <CardBody>
+        <p>Make beautiful websites regardless of your design experience.</p>
+      </CardBody>
+      <Divider/>
+      <CardFooter>
+        <Link
+          isExternal
+          showAnchorIcon
+          href="https://github.com/nextui-org/nextui"
+        >
+          Visit source code on GitHub.
+        </Link>
+      </CardFooter>
+    </Card>
+    
+        <div className="inline-block max-w-lg text-center justify-center">
+          <h1 className={title()}>Make&nbsp;</h1>
+          <h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
+          <br />
+          <h1 className={title()}>
+            websites regardless of your design experience.
+          </h1>
+          <h4 className={subtitle({ class: "mt-4" })}>
+            Beautiful, fast and modern React UI library.
+          </h4>
+        </div>
+
+        <div className="flex gap-3">
+          <Link
+            isExternal
+            className={buttonStyles({
+              color: "primary",
+              radius: "full",
+              variant: "shadow",
+            })}
+            href={siteConfig.links.docs}
+          >
+            Documentation
+          </Link>
+          <Link
+            isExternal
+            className={buttonStyles({ variant: "bordered", radius: "full" })}
+            href={siteConfig.links.github}
+          >
+            <GithubIcon size={20} />
+            GitHub
+          </Link>
+        </div>
+
+        <div className="mt-8">
+          <Snippet hideCopyButton hideSymbol variant="bordered">
+            <span>
+              Get started by editing{" "}
+              <Code color="primary">pages/index.tsx</Code>
+            </span>
+          </Snippet>
+        </div>
+      </section>
     </DefaultLayout>
   );
 }
