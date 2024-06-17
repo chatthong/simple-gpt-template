@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
@@ -19,6 +20,8 @@ export default function IndexPage() {
           <h4 className={subtitle({ class: "mt-4" })}>
             Beautiful, fast and modern React UI library.
           </h4>
+        </div>
+
 
                    <Card className="max-w-[400px]">
       <CardHeader className="flex gap-3">
@@ -50,8 +53,6 @@ export default function IndexPage() {
       </CardFooter>
     </Card>
 
-
-        </div>
 
         <div className="flex gap-3">
           <Link
