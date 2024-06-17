@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs, Tab, Switch, Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
+import { Textarea, Tabs, Tab, Switch, Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
@@ -32,7 +32,8 @@ export default function IndexPage() {
       </Switch>
       <div className="flex w-full flex-col">
         <Tabs aria-label="Options" isVertical={isVertical}>
-          <Tab key="photos" title="Photos">
+
+          <Tab key="chat1" title="Chat #1">
              <Card className="max-w-[400px]">
               <CardHeader className="flex gap-3">
                 <Image
@@ -53,17 +54,16 @@ export default function IndexPage() {
               </CardBody>
               <Divider/>
               <CardFooter>
-                <Link
-                  isExternal
-                  showAnchorIcon
-                  href="https://github.com/nextui-org/nextui"
-                >
-                  Visit source code on GitHub.
-                </Link>
+    <Textarea
+      label="Description"
+      placeholder="Enter your description"
+      className="max-w-xs"
+    />
               </CardFooter>
             </Card>
           </Tab>
-          <Tab key="music" title="Music">
+
+          <Tab key="chat2" title="Chat #2">
            <Card className="max-w-[400px]">
             <CardHeader className="flex gap-3">
               <Image
@@ -84,17 +84,15 @@ export default function IndexPage() {
             </CardBody>
             <Divider/>
             <CardFooter>
-              <Link
-                isExternal
-                showAnchorIcon
-                href="https://github.com/nextui-org/nextui"
-              >
-                Visit source code on GitHub.
-              </Link>
+    <Textarea
+      label="Description"
+      placeholder="Enter your description"
+      className="max-w-xs"
+    />
             </CardFooter>
           </Card>
           </Tab>
-          <Tab key="videos" title="Videos">
+          <Tab key="chat3" title="Chat #3">
            <Card className="max-w-[400px]">
             <CardHeader className="flex gap-3">
               <Image
@@ -115,13 +113,11 @@ export default function IndexPage() {
             </CardBody>
             <Divider/>
             <CardFooter>
-              <Link
-                isExternal
-                showAnchorIcon
-                href="https://github.com/nextui-org/nextui"
-              >
-                Visit source code on GitHub.
-              </Link>
+    <Textarea
+      label="Description"
+      placeholder="Enter your description"
+      className="max-w-xs"
+    />
             </CardFooter>
           </Card>
           </Tab>
