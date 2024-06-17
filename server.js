@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const { constructor, OpenAIApi } = require('openai');
+const { Configuration, OpenAIApi } = require('openai');
 const fs = require('fs');
 const path = require('path');
 
