@@ -4,7 +4,7 @@ import { Button, Kbd,Input,Textarea, Tabs, Tab, Switch, Card, CardHeader, CardBo
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-import {CameraIcon} from './CameraIcon';
+import { CameraIcon } from './CameraIcon';
 import {
   TwitterIcon,
   GithubIcon,
@@ -144,12 +144,14 @@ export default function IndexPage() {
         </div>
 
         <div className="mt-8">
+        <div className="flex gap-4 items-center">
 <Button isIconOnly color="warning" variant="faded" aria-label="Take a photo">
         <CameraIcon />
       </Button>
             <Button color="default">
               Button
             </Button>
+            </div>
           <Snippet hideCopyButton hideSymbol variant="bordered">
             <span>
               Get started by editing{" "}
