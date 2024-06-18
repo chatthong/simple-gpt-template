@@ -62,15 +62,15 @@ export default function IndexPage() {
                       <p>Make beautiful websites regardless of your design experience.</p>
                     </div>
                   </CardBody>
-                  <Divider />
+                  <Divider/>
                   <CardFooter>
                     <Textarea
                       label="Description"
                       placeholder="Enter your description"
-                      className="max-w-xs"
+                      className="flex"
                       endContent={
                         <Kbd className="hidden lg:inline-block" keys={["command"]}>
-                          K
+                          Enter
                         </Kbd>
                       }
                       startContent={
