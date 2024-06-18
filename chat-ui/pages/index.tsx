@@ -58,15 +58,6 @@ export default function IndexPage() {
                               <h5 className="text-small tracking-tight text-default-400">@zoeylang</h5>
                             </div>
                           </div>
-                          <Button
-                            className={isFollowed ? "bg-transparent text-foreground border-default-200" : ""}
-                            color="primary"
-                            radius="full"
-                            size="sm"
-                            variant={isFollowed ? "bordered" : "solid"}
-                          >
-                            {isFollowed ? "Unfollow" : "Follow"}
-                          </Button>
                         </CardHeader>
                         <CardBody className="px-3 py-0 text-small text-default-400">
                           <p>
