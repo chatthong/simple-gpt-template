@@ -33,7 +33,7 @@ export default function IndexPage() {
           <div className="flex w-full flex-col">
             <Tabs aria-label="Options" isVertical={isVertical}>
               <Tab key="chat1" title="Chat #1">
-                <Card className="max-w-[400px] flex items-center justify-center p-4">
+                <Card className="max-w-[400px] flex ">
                   <CardHeader className="flex gap-3">
                     <Image
                       alt="nextui logo"
@@ -58,7 +58,8 @@ export default function IndexPage() {
                       width={40}
                     />
                     </div>
-                    <div className="flex w-full flex-col gap-4">
+
+                    <div className="gap-4">
                       <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
                       <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
                     </div>
