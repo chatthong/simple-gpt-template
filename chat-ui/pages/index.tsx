@@ -50,13 +50,21 @@ export default function IndexPage() {
                   <Divider />
                     <CardBody>
                        <Textarea
-      isDisabled
-      label="Description"
-      labelPlacement="outside"
-      placeholder="Enter your description"
-      defaultValue="NextUI is a React UI library that provides a set of accessible, reusable, and beautiful components."
-      className="max-w-xs"
-    />
+                          isDisabled
+                          label="WhaleGPT"
+                          labelPlacement="outside"
+                          placeholder="Enter your description"
+                          defaultValue="NextUI is a React UI library that provides a set of accessible, reusable, and beautiful components."
+                          className="max-w-xs"
+                        />
+                          <Textarea
+                          isDisabled
+                          label="WhaleGPT"
+                          labelPlacement="outside"
+                          placeholder="Enter your description"
+                          defaultValue="NextUI is a React UI library that provides a set of accessible, reusable, and beautiful components."
+                          className="max-w-xs"
+                        />
                       <p>Make beautiful websites regardless of your design experience.</p>
                     </CardBody>
                   <Divider/>
