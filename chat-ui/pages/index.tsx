@@ -8,7 +8,7 @@ import DefaultLayout from "@/layouts/default";
 import {
   TwitterIcon,
   GithubIcon,
-  DiscordIcon,
+  CameraIcon,
   HeartFilledIcon,
   SearchIcon,
 } from "@/components/icons";
@@ -145,6 +145,12 @@ export default function IndexPage() {
         </div>
 
         <div className="mt-8">
+         <Button isIconOnly color="warning" variant="faded" aria-label="Take a photo">
+        <CameraIcon />
+      </Button>
+            <Button color="default">
+              Button
+            </Button>
           <Snippet hideCopyButton hideSymbol variant="bordered">
             <span>
               Get started by editing{" "}
