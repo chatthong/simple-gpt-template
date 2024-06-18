@@ -3,7 +3,6 @@ import {
   Avatar,
   Button,
   Kbd,
-  Input,
   Textarea,
   Tabs,
   Tab,
@@ -14,7 +13,6 @@ import {
   CardFooter,
   Divider,
   Image,
-  Link,
   Snippet,
   Code,
   button as buttonStyles,
@@ -23,7 +21,6 @@ import {
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-import { CameraIcon } from "@/components/CameraIcon";
 import {
   TwitterIcon,
   GithubIcon,
@@ -71,7 +68,7 @@ export default function IndexPage() {
                     </div>
                   </CardHeader>
                   <Divider />
-                  <CardBody className="flex gap-3">
+                  <CardBody className="flex gap-3 p-4">
                     <div className="relative inline-flex shrink-0">
                       <Image
                         alt="nextui logo"
@@ -82,12 +79,12 @@ export default function IndexPage() {
                       />
                     </div>
 
-                    <div className="gap-4">
-                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
+                    <div className="flex flex-col gap-3">
+                      <p className="relative w-full rounded-md px-4 py-3">
                         Make beautiful websites regardless of your design
                         experience.
                       </p>
-                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
+                      <p className="relative w-full rounded-md px-4 py-3">
                         Make beautiful websites regardless of your design
                         experience.
                       </p>
