@@ -7,7 +7,6 @@ import { GithubIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
 
 export default function IndexPage() {
-
   const [isVertical, setIsVertical] = React.useState(true);
 
   return (
@@ -22,115 +21,114 @@ export default function IndexPage() {
           </h4>
         </div>
 
+        <div className="flex flex-col px-4">
+          <Switch className="mb-4" isSelected={isVertical} onValueChange={setIsVertical}>
+            Vertical
+          </Switch>
+          <div className="flex w-full flex-col">
+            <Tabs aria-label="Options" isVertical={isVertical}>
+              <Tab key="chat1" title="Chat #1">
+                <Card className="max-w-[400px]">
+                  <CardHeader className="flex gap-3">
+                    <Image
+                      alt="nextui logo"
+                      height={40}
+                      radius="sm"
+                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                      width={40}
+                    />
+                    <div className="flex flex-col">
+                      <p className="text-md">NextUI</p>
+                      <p className="text-small text-default-500">nextui.org</p>
+                    </div>
+                  </CardHeader>
+                  <Divider />
+                  <CardBody className="flex gap-3">
+                    <Image
+                      alt="nextui logo"
+                      height={40}
+                      radius="sm"
+                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                      width={40}
+                    />
+                    <div className="flex flex-col">
+                      <p className="text-md">NextUI</p>
+                      <p>Make beautiful websites regardless of your design experience.</p>
+                    </div>
+                  </CardBody>
+                  <Divider />
+                  <CardFooter>
+                    <Textarea
+                      label="Description"
+                      placeholder="Enter your description"
+                      className="max-w-xs"
+                    />
+                  </CardFooter>
+                </Card>
+              </Tab>
 
-    <div className="flex flex-col px-4">
-      <Switch className="mb-4" isSelected={isVertical} onValueChange={setIsVertical}>
-        Vertical
-      </Switch>
-      <div className="flex w-full flex-col">
-        <Tabs aria-label="Options" isVertical={isVertical}>
+              <Tab key="chat2" title="Chat #2">
+                <Card className="max-w-[400px]">
+                  <CardHeader className="flex gap-3">
+                    <Image
+                      alt="nextui logo"
+                      height={40}
+                      radius="sm"
+                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                      width={40}
+                    />
+                    <div className="flex flex-col">
+                      <p className="text-md">NextUI</p>
+                      <p className="text-small text-default-500">nextui.org</p>
+                    </div>
+                  </CardHeader>
+                  <Divider />
+                  <CardBody>
+                    <p>Make beautiful websites regardless of your design experience.</p>
+                  </CardBody>
+                  <Divider />
+                  <CardFooter>
+                    <Textarea
+                      label="Description"
+                      placeholder="Enter your description"
+                      className="max-w-xs"
+                    />
+                  </CardFooter>
+                </Card>
+              </Tab>
 
-          <Tab key="chat1" title="Chat #1">
-             <Card className="max-w-[400px]">
-              <CardHeader className="flex gap-3">
-                <Image
-                  alt="nextui logo"
-                  height={40}
-                  radius="sm"
-                  src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                  width={40}
-                />
-                <div className="flex flex-col">
-                  <p className="text-md">NextUI</p>
-                  <p className="text-small text-default-500">nextui.org</p>
-                </div>
-              </CardHeader>
-              <Divider/>
-              <CardBody className="flex gap-3>
-                  <Image
-                  alt="nextui logo"
-                  height={40}
-                  radius="sm"
-                  src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                  width={40}
-                />
-                <div className="flex flex-col">
-                  <p className="text-md">NextUI</p>
-                  <p>Make beautiful websites regardless of your design experience.</p>
-                </div>
-              </CardBody>
-              <Divider/>
-              <CardFooter>
-    <Textarea
-      label="Description"
-      placeholder="Enter your description"
-      className="max-w-xs"
-    />
-              </CardFooter>
-            </Card>
-          </Tab>
-
-          <Tab key="chat2" title="Chat #2">
-           <Card className="max-w-[400px]">
-            <CardHeader className="flex gap-3">
-              <Image
-                alt="nextui logo"
-                height={40}
-                radius="sm"
-                src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                width={40}
-              />
-              <div className="flex flex-col">
-                <p className="text-md">NextUI</p>
-                <p className="text-small text-default-500">nextui.org</p>
-              </div>
-            </CardHeader>
-            <Divider/>
-            <CardBody>
-              <p>Make beautiful websites regardless of your design experience.</p>
-            </CardBody>
-            <Divider/>
-            <CardFooter>
-    <Textarea
-      label="Description"
-      placeholder="Enter your description"
-      className="max-w-xs"
-    />
-            </CardFooter>
-          </Card>
-          </Tab>
-          <Tab key="chat3" title="Chat #3">
-           <Card className="max-w-[400px]">
-            <CardHeader className="flex gap-3">
-              <Image
-                alt="nextui logo"
-                height={40}
-                radius="sm"
-                src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                width={40}
-              />
-              <div className="flex flex-col">
-                <p className="text-md">NextUI</p>
-                <p className="text-small text-default-500">nextui.org</p>
-              </div>
-            </CardHeader>
-            <Divider/>
-            <CardBody>
-              <p>Make beautiful websites regardless of your design experience.</p>
-            </CardBody>
-            <Divider/>
-            <CardFooter>
-    <Textarea
-      label="Description"
-      placeholder="Enter your description"
-      className="max-w-xs"
-    />
-            </CardFooter>
-          </Card>
-          </Tab>
-        </Tabs>
-      </div>
-    </div>
+              <Tab key="chat3" title="Chat #3">
+                <Card className="max-w-[400px]">
+                  <CardHeader className="flex gap-3">
+                    <Image
+                      alt="nextui logo"
+                      height={40}
+                      radius="sm"
+                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                      width={40}
+                    />
+                    <div className="flex flex-col">
+                      <p className="text-md">NextUI</p>
+                      <p className="text-small text-default-500">nextui.org</p>
+                    </div>
+                  </CardHeader>
+                  <Divider />
+                  <CardBody>
+                    <p>Make beautiful websites regardless of your design experience.</p>
+                  </CardBody>
+                  <Divider />
+                  <CardFooter>
+                    <Textarea
+                      label="Description"
+                      placeholder="Enter your description"
+                      className="max-w-xs"
+                    />
+                  </CardFooter>
+                </Card>
+              </Tab>
+            </Tabs>
+          </div>
+        </div>
 
         <div className="mt-8">
           <Snippet hideCopyButton hideSymbol variant="bordered">
