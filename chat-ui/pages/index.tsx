@@ -6,6 +6,14 @@ import { title, subtitle } from "@/components/primitives";
 import { GithubIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
 
+import {
+  TwitterIcon,
+  GithubIcon,
+  DiscordIcon,
+  HeartFilledIcon,
+  SearchIcon,
+} from "@/components/icons";
+
 export default function IndexPage() {
   const [isVertical, setIsVertical] = React.useState(true);
   return (
