@@ -146,7 +146,7 @@ export default function IndexPage() {
         <div className="mt-8">
         <div className="flex gap-4 items-center">
 <Button isIconOnly color="warning" variant="faded" aria-label="Take a photo">
-        <CameraIcon />
+        <CameraIcon/>
       </Button>
             <Button color="default">
               Button
