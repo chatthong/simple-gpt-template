@@ -48,14 +48,25 @@ export default function IndexPage() {
                     </div>
                   </CardHeader>
                   <Divider />
-                    <CardBody>
+                    <CardBody className="flex gap-3">
+                    <div className="relative flex-none">
+                    <Image
+                      alt="nextui logo"
+                      height={40}
+                      radius="sm"
+                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                      width={40}
+                    />
+                    </div>
+                    <div className="flex w-full flex-col gap-4">
+
                        <Textarea
                           isDisabled
                           label="WhaleGPT"
                           labelPlacement="outside"
                           placeholder="Enter your description"
                           defaultValue="NextUI is a React UI library that provides a set of accessible, reusable, and beautiful components."
-                          className="max-w-xs"
+                          className="max-w-xs mt-2 relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600"
                         />
                           <Textarea
                           isDisabled
@@ -63,9 +74,10 @@ export default function IndexPage() {
                           labelPlacement="outside"
                           placeholder="Enter your description"
                           defaultValue="NextUI is a React UI library that provides a set of accessible, reusable, and beautiful components."
-                          className="max-w-xs"
+                          className="max-w-xs mt-2"
                         />
-                      <p>Make beautiful websites regardless of your design experience.</p>
+                      <p className="relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
+                      </div>
                     </CardBody>
                   <Divider/>
                   <CardFooter>
