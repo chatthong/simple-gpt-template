@@ -49,7 +49,7 @@ export default function IndexPage() {
                     </div>
                   </CardHeader>
                   <Divider />
-                  <CardBody className="flex gap-3">
+                  <CardBody className="flex gap-3 flex-col">
                     <Image
                       alt="nextui logo"
                       height={40}
