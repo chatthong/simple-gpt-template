@@ -64,7 +64,6 @@ export default function IndexPage() {
                             radius="full"
                             size="sm"
                             variant={isFollowed ? "bordered" : "solid"}
-                            onPress={() => setIsFollowed(!isFollowed)}
                           >
                             {isFollowed ? "Unfollow" : "Follow"}
                           </Button>
