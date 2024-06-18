@@ -4,7 +4,7 @@ import { Button, Kbd,Input,Textarea, Tabs, Tab, Switch, Card, CardHeader, CardBo
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-import { CameraIcon } from './CameraIcon';
+import { CameraIcon } from '@/components/CameraIcon';
 import {
   TwitterIcon,
   GithubIcon,
