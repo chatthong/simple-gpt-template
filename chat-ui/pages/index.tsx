@@ -68,7 +68,7 @@ export default function IndexPage() {
                     </div>
                   </CardHeader>
                   <Divider />
-                  <CardBody className="flex gap-3 p-4">
+                  <CardBody className="flex gap-3">
                     <div className="relative inline-flex shrink-0">
                       <Image
                         alt="nextui logo"
@@ -77,14 +77,18 @@ export default function IndexPage() {
                         src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
                         width={40}
                       />
-                    </div>
-
-                    <div className="flex flex-col gap-3">
-                      <p className="relative w-full rounded-md px-4 py-3">
+                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
                         Make beautiful websites regardless of your design
                         experience.
                       </p>
-                      <p className="relative w-full rounded-md px-4 py-3">
+                    </div>
+
+                    <div className="gap-4">
+                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
+                        Make beautiful websites regardless of your design
+                        experience.
+                      </p>
+                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
                         Make beautiful websites regardless of your design
                         experience.
                       </p>
