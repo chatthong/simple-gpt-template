@@ -1,10 +1,29 @@
 import React from "react";
-import { Avatar, Button, Kbd,Input,Textarea, Tabs, Tab, Switch, Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
+import {
+  Avatar,
+  Button,
+  Kbd,
+  Input,
+  Textarea,
+  Tabs,
+  Tab,
+  Switch,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Divider,
+  Image,
+  Link,
+  Snippet,
+  Code,
+  button as buttonStyles,
+} from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-import { CameraIcon } from '@/components/CameraIcon';
+import { CameraIcon } from "@/components/CameraIcon";
 import {
   TwitterIcon,
   GithubIcon,
@@ -27,7 +46,11 @@ export default function IndexPage() {
         </div>
 
         <div className="flex flex-col px-4">
-          <Switch className="mb-4" isSelected={isVertical} onValueChange={setIsVertical}>
+          <Switch
+            className="mb-4"
+            isSelected={isVertical}
+            onValueChange={setIsVertical}
+          >
             Vertical
           </Switch>
           <div className="flex w-full flex-col">
@@ -48,30 +71,39 @@ export default function IndexPage() {
                     </div>
                   </CardHeader>
                   <Divider />
-                    <CardBody className="flex gap-3">
+                  <CardBody className="flex gap-3">
                     <div className="relative inline-flex shrink-0">
-                    <Image
-                      alt="nextui logo"
-                      height={40}
-                      radius="sm"
-                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                      width={40}
-                    />
+                      <Image
+                        alt="nextui logo"
+                        height={40}
+                        radius="sm"
+                        src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
+                        width={40}
+                      />
                     </div>
 
                     <div className="gap-4">
-                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
-                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
+                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
+                        Make beautiful websites regardless of your design
+                        experience.
+                      </p>
+                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
+                        Make beautiful websites regardless of your design
+                        experience.
+                      </p>
                     </div>
-                    </CardBody>
-                  <Divider/>
+                  </CardBody>
+                  <Divider />
                   <CardFooter>
                     <Textarea
                       label="Description"
                       placeholder="Enter your description"
                       className="flex"
                       endContent={
-                        <Kbd className="hidden lg:inline-block" keys={["command"]}>
+                        <Kbd
+                          className="hidden lg:inline-block"
+                          keys={["command"]}
+                        >
                           Enter
                         </Kbd>
                       }
@@ -85,38 +117,52 @@ export default function IndexPage() {
 
               <Tab key="chat2" title="Chat #2">
                 <Card className="max-w-[340px]">
-                        <CardHeader className="justify-between">
-                          <div className="flex gap-5">
-                            <Avatar isBordered radius="full" size="md" src="https://nextui.org/avatars/avatar-1.png" />
-                            <div className="flex flex-col gap-1 items-start justify-center">
-                              <h4 className="text-small font-semibold leading-none text-default-600">Zoey Lang</h4>
-                              <h5 className="text-small tracking-tight text-default-400">@zoeylang</h5>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardBody className="px-3 py-0 text-small text-default-400">
-                          <p>
-                            Frontend developer and UI/UX enthusiast. Join me on this coding adventure!
-                          </p>
-                          <span className="pt-2">
-                            #FrontendWithZoey 
-                            <span className="py-2" aria-label="computer" role="img">
-                              💻
-                            </span>
-                          </span>
-                        </CardBody>
+                  <CardHeader className="justify-between">
+                    <div className="flex gap-5">
+                      <Avatar
+                        isBordered
+                        radius="full"
+                        size="md"
+                        src="https://nextui.org/avatars/avatar-1.png"
+                      />
+                      <div className="flex flex-col gap-1 items-start justify-center">
+                        <h4 className="text-small font-semibold leading-none text-default-600">
+                          Zoey Lang
+                        </h4>
+                        <h5 className="text-small tracking-tight text-default-400">
+                          @zoeylang
+                        </h5>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardBody className="px-3 py-0 text-small text-default-400">
+                    <p>
+                      Frontend developer and UI/UX enthusiast. Join me on this
+                      coding adventure!
+                    </p>
+                    <span className="pt-2">
+                      #FrontendWithZoey
+                      <span className="py-2" aria-label="computer" role="img">
+                        💻
+                      </span>
+                    </span>
+                  </CardBody>
 
-                         <CardFooter className="gap-3">
-                          <div className="flex gap-1">
-                            <p className="font-semibold text-default-400 text-small">4</p>
-                            <p className=" text-default-400 text-small">Following</p>
-                          </div>
-                          <div className="flex gap-1">
-                            <p className="font-semibold text-default-400 text-small">97.1K</p>
-                            <p className="text-default-400 text-small">Followers</p>
-                          </div>
-                        </CardFooter>
-                      </Card>
+                  <CardFooter className="gap-3">
+                    <div className="flex gap-1">
+                      <p className="font-semibold text-default-400 text-small">
+                        4
+                      </p>
+                      <p className=" text-default-400 text-small">Following</p>
+                    </div>
+                    <div className="flex gap-1">
+                      <p className="font-semibold text-default-400 text-small">
+                        97.1K
+                      </p>
+                      <p className="text-default-400 text-small">Followers</p>
+                    </div>
+                  </CardFooter>
+                </Card>
               </Tab>
 
               <Tab key="chat3" title="Chat #3">
@@ -136,7 +182,10 @@ export default function IndexPage() {
                   </CardHeader>
                   <Divider />
                   <CardBody>
-                    <p>Make beautiful websites regardless of your design experience.</p>
+                    <p>
+                      Make beautiful websites regardless of your design
+                      experience.
+                    </p>
                   </CardBody>
                   <Divider />
                   <CardFooter>
@@ -153,14 +202,10 @@ export default function IndexPage() {
         </div>
 
         <div className="mt-8">
-        <div className="flex gap-4 items-center">
-            <Button color="default">
-              Button
-            </Button>
-              <Button color="default">
-              Button
-            </Button>
-            </div>
+          <div className="flex gap-4 items-center">
+            <Button color="default">Button</Button>
+            <Button color="default">Button</Button>
+          </div>
           <Snippet hideCopyButton hideSymbol variant="bordered">
             <span>
               Get started by editing{" "}
