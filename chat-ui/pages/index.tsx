@@ -4,11 +4,10 @@ import { Kbd,Input,Textarea, Tabs, Tab, Switch, Card, CardHeader, CardBody, Card
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-
+import {CameraIcon} from './CameraIcon';
 import {
   TwitterIcon,
   GithubIcon,
-  CameraIcon,
   HeartFilledIcon,
   SearchIcon,
 } from "@/components/icons";
