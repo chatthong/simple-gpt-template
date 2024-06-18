@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Kbd,Input,Textarea, Tabs, Tab, Switch, Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
+import { Avatar, Button, Kbd,Input,Textarea, Tabs, Tab, Switch, Card, CardHeader, CardBody, CardFooter, Divider, Image, Link, Snippet, Code, button as buttonStyles } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
