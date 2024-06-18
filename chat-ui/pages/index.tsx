@@ -8,7 +8,6 @@ import DefaultLayout from "@/layouts/default";
 
 export default function IndexPage() {
   const [isVertical, setIsVertical] = React.useState(true);
-
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -63,6 +62,24 @@ export default function IndexPage() {
                       placeholder="Enter your description"
                       className="max-w-xs"
                     />
+                        <Input
+      aria-label="Search"
+      classNames={{
+        inputWrapper: "bg-default-100",
+        input: "text-sm",
+      }}
+      endContent={
+        <Kbd className="hidden lg:inline-block" keys={["command"]}>
+          K
+        </Kbd>
+      }
+      labelPlacement="outside"
+      placeholder="Search..."
+      startContent={
+        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+      }
+      type="search"
+    />
                   </CardFooter>
                 </Card>
               </Tab>
