@@ -59,25 +59,9 @@ export default function IndexPage() {
                     />
                     </div>
                     <div className="flex w-full flex-col gap-4">
-
-                       <Textarea
-                          isDisabled
-                          label="WhaleGPT"
-                          labelPlacement="outside"
-                          placeholder="Enter your description"
-                          defaultValue="NextUI is a React UI library that provides a set of accessible, reusable, and beautiful components."
-                          className="max-w-xs mt-2 relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600"
-                        />
-                          <Textarea
-                          isDisabled
-                          label="WhaleGPT"
-                          labelPlacement="outside"
-                          placeholder="Enter your description"
-                          defaultValue="NextUI is a React UI library that provides a set of accessible, reusable, and beautiful components."
-                          className="max-w-xs mt-2"
-                        />
-                      <p className="relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
-                      </div>
+                      <p className="max-w-xs relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
+                      <p className="max-w-xs relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">Make beautiful websites regardless of your design experience.</p>
+                    </div>
                     </CardBody>
                   <Divider/>
                   <CardFooter>
