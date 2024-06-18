@@ -33,7 +33,7 @@ export default function IndexPage() {
           <div className="flex w-full flex-col">
             <Tabs aria-label="Options" isVertical={isVertical}>
               <Tab key="chat1" title="Chat #1">
-                <Card className="max-w-[400px]">
+                <Card className="max-w-[400px] flex items-center justify-center p-4">
                   <CardHeader className="flex gap-3">
                     <Image
                       alt="nextui logo"
