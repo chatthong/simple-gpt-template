@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import OpenAI from "openai";
+
 import {
   Avatar,
   Button,
@@ -12,32 +12,13 @@ import {
   CardBody,
   CardFooter,
   Divider,
+  Image,
 } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
 import { CameraIcon } from "@/components/icons";
+import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const fetchChatCompletion = async (initialMessages) => {
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: initialMessages,
-      temperature: 1,
-      max_tokens: 1000,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    });
-    return response.data.choices[0].message.content;
-  } catch (error) {
-    console.error("Error fetching chat completion:", error);
-  }
-};
 
 const initialMessages = [
   { role: "system", content: process.env.MASTER_PROMPT || "System prompt" },
@@ -62,35 +43,6 @@ export default function IndexPage() {
     };
     setChats([...chats, newChat]);
   };
-
-  const handleSendMessage = async (chatId) => {
-    const newMessages = [
-      ...chats.find((chat) => chat.id === chatId).messages,
-      { role: "user", content: description },
-    ];
-    const updatedChats = chats.map((chat) =>
-      chat.id === chatId ? { ...chat, messages: newMessages } : chat
-    );
-    setChats(updatedChats);
-    setDescription("");
-
-    const aiResponse = await fetchChatCompletion(newMessages);
-    if (aiResponse) {
-      const updatedChatsWithAIResponse = updatedChats.map((chat) =>
-        chat.id === chatId
-          ? {
-              ...chat,
-              messages: [
-                ...newMessages,
-                { role: "assistant", content: aiResponse },
-              ],
-            }
-          : chat
-      );
-      setChats(updatedChatsWithAIResponse);
-    }
-  };
-
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -162,7 +114,6 @@ export default function IndexPage() {
                           <Button
                             size="sm"
                             endContent={<CameraIcon size={20} />}
-                            onClick={() => handleSendMessage(chat.id)}
                           ></Button>
                         }
                       />
