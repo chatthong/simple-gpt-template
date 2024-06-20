@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import OpenAI from "openai";
 import {
   Avatar,
   Button,
@@ -6,213 +7,182 @@ import {
   Textarea,
   Tabs,
   Tab,
-  Switch,
   Card,
   CardHeader,
   CardBody,
   CardFooter,
   Divider,
-  Image,
-  Snippet,
-  Code,
-  button as buttonStyles,
 } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
+import { CameraIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
-import {
-  TwitterIcon,
-  GithubIcon,
-  HeartFilledIcon,
-  SearchIcon,
-} from "@/components/icons";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const fetchChatCompletion = async (initialMessages) => {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: initialMessages,
+      temperature: 1,
+      max_tokens: 1000,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+    return response.data.choices[0].message.content;
+  } catch (error) {
+    console.error("Error fetching chat completion:", error);
+  }
+};
+
+const initialMessages = [
+  { role: "system", content: process.env.MASTER_PROMPT || "System prompt" },
+  { role: "user", content: "สวัสดีครับ" },
+  {
+    role: "assistant",
+    content:
+      "สวัสดีครับคุณลูกค้า แอดมินครับ ไม่ทราบว่าคุณลูกค้ากำลังปลูกอะไรอยู่ครับ? หรือมีสินค้าตัวไหนสนใจเป็นพิเศษครับ? 😊",
+  },
+];
+
+const initialChats = [{ id: 1, messages: initialMessages }];
 
 export default function IndexPage() {
-  const [isVertical, setIsVertical] = React.useState(true);
+  const [chats, setChats] = useState(initialChats);
+  const [description, setDescription] = useState("");
+
+  const handleAddTab = () => {
+    const newChat = {
+      id: chats.length + 1,
+      messages: [{ role: "user", content: "New chat started" }],
+    };
+    setChats([...chats, newChat]);
+  };
+
+  const handleSendMessage = async (chatId) => {
+    const newMessages = [
+      ...chats.find((chat) => chat.id === chatId).messages,
+      { role: "user", content: description },
+    ];
+    const updatedChats = chats.map((chat) =>
+      chat.id === chatId ? { ...chat, messages: newMessages } : chat
+    );
+    setChats(updatedChats);
+    setDescription("");
+
+    const aiResponse = await fetchChatCompletion(newMessages);
+    if (aiResponse) {
+      const updatedChatsWithAIResponse = updatedChats.map((chat) =>
+        chat.id === chatId
+          ? {
+              ...chat,
+              messages: [
+                ...newMessages,
+                { role: "assistant", content: aiResponse },
+              ],
+            }
+          : chat
+      );
+      setChats(updatedChatsWithAIResponse);
+    }
+  };
+
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         <div className="inline-block max-w-lg text-center justify-center">
-          <h1 className={title()}>Whale&nbsp;</h1>
-          <h1 className={title({ color: "violet" })}>GPT&nbsp;</h1>
+          <h1 className="title">Whale&nbsp;</h1>
+          <h1 className="title" style={{ color: "violet" }}>
+            GPT&nbsp;
+          </h1>
           <br />
-          <h4 className={subtitle({ class: "mt-4" })}>
-            Beautiful, Customer Helper GPT
-          </h4>
+          <h4 className="subtitle mt-4">Beautiful, Customer Helper GPT</h4>
         </div>
 
         <div className="flex flex-col px-4">
-          <Switch
-            className="mb-4"
-            isSelected={isVertical}
-            onValueChange={setIsVertical}
-          >
-            Vertical
-          </Switch>
           <div className="flex w-full flex-col">
-            <Tabs aria-label="Options" isVertical={isVertical}>
-              <Tab key="chat1" title="Chat #1">
-                <Card className="max-w-[400px] flex ">
-                  <CardHeader className="flex gap-3">
-                    <Image
-                      alt="nextui logo"
-                      height={40}
-                      radius="sm"
-                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                      width={40}
-                    />
-                    <div className="flex flex-col">
-                      <p className="text-md">NextUI</p>
-                      <p className="text-small text-default-500">nextui.org</p>
-                    </div>
-                  </CardHeader>
-                  <Divider />
-                  <CardBody className="flex gap-3">
-                    <div className="relative inline-flex shrink-0">
-                      <Image
-                        alt="nextui logo"
-                        height={40}
-                        radius="sm"
-                        src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                        width={40}
-                      />
-                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
-                        Make beautiful websites regardless of your design
-                        experience.
-                      </p>
-                    </div>
-
-                    <div className="gap-4">
-                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
-                        Make beautiful websites regardless of your design
-                        experience.
-                      </p>
-                      <p className="text-small relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600">
-                        Make beautiful websites regardless of your design
-                        experience.
-                      </p>
-                    </div>
-                  </CardBody>
-                  <Divider />
-                  <CardFooter>
-                    <Textarea
-                      label="Description"
-                      placeholder="Enter your description"
-                      className="flex"
-                      endContent={
-                        <Kbd
-                          className="hidden lg:inline-block"
-                          keys={["command"]}
-                        >
-                          Enter
-                        </Kbd>
-                      }
-                      startContent={
-                        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-                      }
-                    />
-                  </CardFooter>
-                </Card>
-              </Tab>
-
-              <Tab key="chat2" title="Chat #2">
-                <Card className="max-w-[340px]">
-                  <CardHeader className="justify-between">
-                    <div className="flex gap-5">
-                      <Avatar
-                        isBordered
-                        radius="full"
-                        size="md"
-                        src="https://nextui.org/avatars/avatar-1.png"
-                      />
-                      <div className="flex flex-col gap-1 items-start justify-center">
-                        <h4 className="text-small font-semibold leading-none text-default-600">
-                          Zoey Lang
-                        </h4>
-                        <h5 className="text-small tracking-tight text-default-400">
-                          @zoeylang
-                        </h5>
+            <Tabs aria-label="Options" placement="start">
+              {chats.map((chat) => (
+                <Tab key={`chat${chat.id}`} title={`Chat #${chat.id}`}>
+                  <Card className="w-[600px] flex">
+                    <CardHeader className="flex gap-3">
+                      <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:justify-between">
+                        <p className="text-md">WhaleGPT</p>
+                        <div className="inline-flex justify-center">
+                          <Tabs radius="full" aria-label="Tabs radius">
+                            <Tab key="Creative" title="Creative" />
+                            <Tab key="Formal" title="Formal" />
+                          </Tabs>
+                        </div>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardBody className="px-3 py-0 text-small text-default-400">
-                    <p>
-                      Frontend developer and UI/UX enthusiast. Join me on this
-                      coding adventure!
-                    </p>
-                    <span className="pt-2">
-                      #FrontendWithZoey
-                      <span className="py-2" aria-label="computer" role="img">
-                        💻
-                      </span>
-                    </span>
-                  </CardBody>
-
-                  <CardFooter className="gap-3">
-                    <div className="flex gap-1">
-                      <p className="font-semibold text-default-400 text-small">
-                        4
-                      </p>
-                      <p className=" text-default-400 text-small">Following</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <p className="font-semibold text-default-400 text-small">
-                        97.1K
-                      </p>
-                      <p className="text-default-400 text-small">Followers</p>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </Tab>
-
-              <Tab key="chat3" title="Chat #3">
-                <Card className="max-w-[400px]">
-                  <CardHeader className="flex gap-3">
-                    <Image
-                      alt="nextui logo"
-                      height={40}
-                      radius="sm"
-                      src="https://avatars.githubusercontent.com/u/86160567?s=200&v=4"
-                      width={40}
-                    />
-                    <div className="flex flex-col">
-                      <p className="text-md">NextUI</p>
-                      <p className="text-small text-default-500">nextui.org</p>
-                    </div>
-                  </CardHeader>
-                  <Divider />
-                  <CardBody>
-                    <p>
-                      Make beautiful websites regardless of your design
-                      experience.
-                    </p>
-                  </CardBody>
-                  <Divider />
-                  <CardFooter>
-                    <Textarea
-                      label="Description"
-                      placeholder="Enter your description"
-                      className="max-w-xs"
-                    />
-                  </CardFooter>
-                </Card>
-              </Tab>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody className="flex gap-3 ">
+                      {chat.messages
+                        .filter((msg) => msg.role !== "system")
+                        .map((message, index) => (
+                          <div
+                            key={index}
+                            className="relative inline-flex shrink-0"
+                          >
+                            <Avatar
+                              radius="sm"
+                              src={
+                                message.role === "user"
+                                  ? siteConfig.profileURLUser
+                                  : siteConfig.profileURLAI
+                              }
+                            />
+                            <p className="max-w-[530px] ml-2 text-small relative rounded-medium bg-content2 px-4 py-3 text-default-600">
+                              {message.content}
+                            </p>
+                          </div>
+                        ))}
+                    </CardBody>
+                    <Divider />
+                    <CardFooter>
+                      <Textarea
+                        placeholder="Enter your description"
+                        className="flex"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        endContent={
+                          <Kbd
+                            className="hidden lg:inline-block"
+                            keys={["enter"]}
+                          >
+                            Enter
+                          </Kbd>
+                        }
+                        startContent={
+                          <Button
+                            size="sm"
+                            endContent={<CameraIcon size={20} />}
+                            onClick={() => handleSendMessage(chat.id)}
+                          ></Button>
+                        }
+                      />
+                    </CardFooter>
+                  </Card>
+                </Tab>
+              ))}
             </Tabs>
           </div>
-        </div>
-
-        <div className="mt-8">
-          <div className="flex gap-4 items-center">
-            <Button color="default">Button</Button>
-            <Button color="default">Button</Button>
+          <div className="flex mt-2">
+            <Button
+              isIconOnly
+              radius="full"
+              key="newchat"
+              onClick={handleAddTab}
+              size="sm"
+            >
+              +
+            </Button>
           </div>
-          <Snippet hideCopyButton hideSymbol variant="bordered">
-            <span>
-              Get started by editing{" "}
-              <Code color="primary">pages/index.tsx</Code>
-            </span>
-          </Snippet>
         </div>
       </section>
     </DefaultLayout>
