@@ -137,13 +137,11 @@ export default function IndexPage() {
 
                             <p className="max-w-[530px] ml-2 text-small relative rounded-medium bg-content2 px-4 py-3 text-default-600">
                               {isValidURL(message.content) ? (
-                                <img
+                                <Image
+                                  isBlurred
+                                  width={200}
                                   src={message.content}
-                                  alt="Chat Content"
-                                  style={{
-                                    maxWidth: "100%",
-                                    borderRadius: "8px",
-                                  }}
+                                  alt="Image..."
                                 />
                               ) : (
                                 message.content
