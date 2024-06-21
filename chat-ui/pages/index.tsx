@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import OpenAI from "openai";
 import {
   Avatar,
   Button,
@@ -19,6 +19,30 @@ import { siteConfig } from "@/config/site";
 import { CameraIcon } from "@/components/icons";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+async function analyzeImage() {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4-turbo",
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: "What's in this image?" },
+          {
+            type: "image_url",
+            image_url:
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+          },
+        ],
+      },
+    ],
+  });
+  console.log(response.choices[0]);
+}
 
 const initialMessages = [
   { role: "system", content: process.env.MASTER_PROMPT || "System prompt" },
@@ -114,6 +138,7 @@ export default function IndexPage() {
                           <Button
                             size="sm"
                             endContent={<CameraIcon size={20} />}
+                            onClick={analyzeImage}
                           ></Button>
                         }
                       />
