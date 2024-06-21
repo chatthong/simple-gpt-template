@@ -13,6 +13,7 @@ import {
   CardFooter,
   Divider,
   Image,
+  Code,
 } from "@nextui-org/react";
 
 import { siteConfig } from "@/config/site";
@@ -145,15 +146,6 @@ export default function IndexPage() {
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="inline-block max-w-lg text-center justify-center">
-          <h1 className="title">Whale&nbsp;</h1>
-          <h1 className="title" style={{ color: "violet" }}>
-            GPT&nbsp;
-          </h1>
-          <br />
-          <h4 className="subtitle mt-4">Beautiful, Customer Helper GPT</h4>
-        </div>
-
         <div className="flex flex-col px-4">
           <div className="flex w-full flex-col">
             <Tabs

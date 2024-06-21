@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js + NextUI",
-  description: "Make beautiful websites regardless of your design experience.",
+  name: "Whale GPT",
+  description: "Company GPT helper",
   profileURLAI:
     "https://scontent.fbkk5-6.fna.fbcdn.net/v/t39.30808-6/338129646_769644241090378_5632671267648388357_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=5f2048&_nc_ohc=3M2JQU6FkF0Q7kNvgHYQMwY&_nc_ht=scontent.fbkk5-6.fna&oh=00_AYAUFgFBQXHSEc_yl2iPNyBHNOC9M8hmLwslXjt_FvtvNA&oe=6677A372",
   profileURLUser:
