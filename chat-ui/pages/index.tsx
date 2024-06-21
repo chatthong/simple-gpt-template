@@ -26,6 +26,12 @@ interface ChatMessage {
   name?: string;
 }
 
+interface Chat {
+  id: number;
+  messages: ChatMessage[];
+}
+
+// Initial messages for each chat
 const initialMessages: ChatMessage[] = [
   { role: "system", content: process.env.MASTER_PROMPT || "System prompt" },
   { role: "user", content: "สวัสดีครับ" },
@@ -36,6 +42,7 @@ const initialMessages: ChatMessage[] = [
   },
 ];
 
+// Function to validate if a text is a valid URL
 const isValidURL = (text: string) => {
   try {
     new URL(text);
@@ -45,76 +52,94 @@ const isValidURL = (text: string) => {
   }
 };
 
+// Initialize OpenAI API
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
-const initialChats = [{ id: 1, messages: initialMessages }];
+// Initial chats array with one chat containing initial messages
+const initialChats: Chat[] = [{ id: 1, messages: initialMessages }];
 
 export default function IndexPage() {
   const [textareaContent, setTextareaContent] = useState<string>("");
-  const [chatMessages, setChatMessages] =
-    useState<ChatMessage[]>(initialMessages);
-
+  const [chats, setChats] = useState<Chat[]>(initialChats);
+  const [activeChatId, setActiveChatId] = useState<number>(1);
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
+  // Handle key down event for the textarea
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Prevent newline in textarea
       if (textareaContent.trim() === "") {
         setIsInvalid(true);
-        setTimeout(() => setIsInvalid(false), 300); // Reset isInvalid after 3 seconds
+        setTimeout(() => setIsInvalid(false), 3000); // Reset isInvalid after 3 seconds
       } else {
         callToOpenAI();
       }
     }
   };
+
+  // Handle textarea change event
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaContent(e.target.value);
   };
 
+  // Wrapper for textarea change event handler
   const handleInputChange = (e: unknown) => {
     const event = e as React.ChangeEvent<HTMLTextAreaElement>;
     handleTextareaChange(event);
   };
 
+  // Wrapper for textarea key down event handler
   const handleInputKeyDown = (e: unknown) => {
     const event = e as React.KeyboardEvent<HTMLTextAreaElement>;
     handleKeyDown(event);
   };
 
-  const [chats, setChats] = useState(initialChats);
-  const [description, setDescription] = useState("");
-
-  async function callToOpenAI() {
+  // Function to call OpenAI API and update the chat messages
+  const callToOpenAI = async () => {
     const userMessage: ChatMessage = { role: "user", content: textareaContent };
-    const updatedMessages = [...chatMessages, userMessage];
-    setChatMessages(updatedMessages);
+    const updatedChats = chats.map((chat) =>
+      chat.id === activeChatId
+        ? { ...chat, messages: [...chat.messages, userMessage] }
+        : chat
+    );
+    setChats(updatedChats);
     setTextareaContent(""); // Clear the textarea
+
     const response = await openai.chat.completions.create({
       model: "gpt-4",
-      messages: updatedMessages, // No need to concatenate initialMessages again
+      messages:
+        updatedChats.find((chat) => chat.id === activeChatId)?.messages || [],
       temperature: 1,
       max_tokens: 256,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
     });
-    console.log(response.choices[0]);
     const assistantMessage: ChatMessage = {
       role: "assistant",
       content: response.choices[0].message.content ?? "", // Provide a default value if null
     };
-    setChatMessages((prevMessages) => [...prevMessages, assistantMessage]);
-  }
+    setChats((chats) =>
+      chats.map((chat) =>
+        chat.id === activeChatId
+          ? { ...chat, messages: [...chat.messages, assistantMessage] }
+          : chat
+      )
+    );
+  };
 
+  // Function to handle adding a new chat tab
   const handleAddTab = () => {
-    const newChat = {
-      id: chats.length + 1,
-      messages: [{ role: "user", content: "New chat started" } as ChatMessage],
+    const newChatId = chats.length + 1;
+    const newChat: Chat = {
+      id: newChatId,
+      messages: initialMessages,
     };
     setChats([...chats, newChat]);
+    setActiveChatId(newChatId);
   };
 
   return (
@@ -131,9 +156,14 @@ export default function IndexPage() {
 
         <div className="flex flex-col px-4">
           <div className="flex w-full flex-col">
-            <Tabs aria-label="Options" placement="start">
+            <Tabs
+              aria-label="Options"
+              placement="start"
+              selectedKey={String(activeChatId)}
+              onSelectionChange={(key) => setActiveChatId(Number(key))}
+            >
               {chats.map((chat) => (
-                <Tab key={`chat${chat.id}`} title={`Chat #${chat.id}`}>
+                <Tab key={String(chat.id)} title={`Chat #${chat.id}`}>
                   <Card className="w-[600px] flex">
                     <CardHeader className="flex gap-3">
                       <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:justify-between">
@@ -148,7 +178,7 @@ export default function IndexPage() {
                     </CardHeader>
                     <Divider />
                     <CardBody className="flex gap-3 ">
-                      {chatMessages
+                      {chat.messages
                         .filter((msg) => msg.role !== "system")
                         .map((message, index) => (
                           <div
@@ -200,6 +230,7 @@ export default function IndexPage() {
                             size="sm"
                             endContent={<CameraIcon size={20} />}
                             className="pt-8 pb-8 mr-1"
+                            onClick={callToOpenAI}
                           ></Button>
                         }
                       />
