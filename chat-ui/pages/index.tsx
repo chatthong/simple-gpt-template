@@ -57,13 +57,19 @@ export default function IndexPage() {
   const [chatMessages, setChatMessages] =
     useState<ChatMessage[]>(initialMessages);
 
+  const [isInvalid, setIsInvalid] = useState<boolean>(false);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Prevent newline in textarea
-      callToOpenAI();
+      if (textareaContent.trim() === "") {
+        setIsInvalid(true);
+        setTimeout(() => setIsInvalid(false), 300); // Reset isInvalid after 3 seconds
+      } else {
+        callToOpenAI();
+      }
     }
   };
-
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaContent(e.target.value);
   };
@@ -176,10 +182,10 @@ export default function IndexPage() {
                     <Divider />
                     <CardFooter>
                       <Textarea
+                        isInvalid={isInvalid}
                         placeholder="Type your message here"
                         onChange={handleInputChange}
                         onKeyDown={handleInputKeyDown}
-                        className="flex"
                         value={textareaContent}
                         endContent={
                           <Kbd
@@ -193,7 +199,6 @@ export default function IndexPage() {
                           <Button
                             size="sm"
                             endContent={<CameraIcon size={20} />}
-                            onClick={callToOpenAI}
                           ></Button>
                         }
                       />
