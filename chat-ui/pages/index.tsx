@@ -20,42 +20,6 @@ import { CameraIcon } from "@/components/icons";
 import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-async function callToOpenAI() {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-      {
-        role: "system",
-        content: "You are a helpful assistant.",
-      },
-      {
-        role: "user",
-        content: "im peter",
-      },
-      {
-        role: "user",
-        content:
-          "what is this image: https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-      },
-      {
-        role: "assistant",
-        content:
-          "This image depicts a beautiful outdoor scene with a wooden boardwalk pathway leading through a field of tall green grass. The sky is clear and blue with a few scattered clouds, creating a serene and peaceful atmosphere. The pathway seems to lead further into the expansive field, inviting one to take a walk and enjoy the natural surroundings. This type of landscape is often found in parks, nature reserves, or rural areas.",
-      },
-    ],
-    temperature: 1,
-    max_tokens: 256,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-  });
-  console.log(response.choices[0]);
-}
-
 const initialMessages = [
   { role: "system", content: process.env.MASTER_PROMPT || "System prompt" },
   { role: "user", content: "สวัสดีครับ" },
@@ -66,11 +30,47 @@ const initialMessages = [
   },
 ];
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
+
 const initialChats = [{ id: 1, messages: initialMessages }];
 
 export default function IndexPage() {
+  const [textareaContent, setTextareaContent] = useState<string>("");
+  const [chatMessages, setChatMessages] = useState(initialMessages);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevent newline in textarea
+      callToOpenAI();
+    }
+  };
+
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setTextareaContent(e.target.value);
+  };
   const [chats, setChats] = useState(initialChats);
   const [description, setDescription] = useState("");
+
+  async function callToOpenAI() {
+    const userMessage = { role: "user", content: textareaContent };
+    const updatedMessages = [...chatMessages, userMessage];
+    setChatMessages(updatedMessages);
+    setTextareaContent(""); // Clear the textarea
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [...initialMessages, ...updatedMessages],
+      temperature: 1,
+      max_tokens: 256,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+    console.log(response.choices[0]);
+    const assistantMessage = response.choices[0].message;
+    setChatMessages((prevMessages) => [...prevMessages, assistantMessage]);
+  }
 
   const handleAddTab = () => {
     const newChat = {
@@ -110,7 +110,7 @@ export default function IndexPage() {
                     </CardHeader>
                     <Divider />
                     <CardBody className="flex gap-3 ">
-                      {chat.messages
+                      {chatMessages
                         .filter((msg) => msg.role !== "system")
                         .map((message, index) => (
                           <div
@@ -134,10 +134,11 @@ export default function IndexPage() {
                     <Divider />
                     <CardFooter>
                       <Textarea
-                        placeholder="Enter your description"
+                        placeholder="Type your message here"
+                        onChange={handleTextareaChange}
+                        onKeyDown={handleKeyDown}
                         className="flex"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        value={textareaContent}
                         endContent={
                           <Kbd
                             className="hidden lg:inline-block"
