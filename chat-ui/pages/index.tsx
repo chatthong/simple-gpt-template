@@ -24,22 +24,34 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function analyzeImage() {
+async function callToOpenAI() {
   const response = await openai.chat.completions.create({
-    model: "gpt-4-turbo",
+    model: "gpt-4o",
     messages: [
       {
+        role: "system",
+        content: "You are a helpful assistant.",
+      },
+      {
         role: "user",
-        content: [
-          { type: "text", text: "What's in this image?" },
-          {
-            type: "image_url",
-            image_url:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
-          },
-        ],
+        content: "im peter",
+      },
+      {
+        role: "user",
+        content:
+          "what is this image: https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+      },
+      {
+        role: "assistant",
+        content:
+          "This image depicts a beautiful outdoor scene with a wooden boardwalk pathway leading through a field of tall green grass. The sky is clear and blue with a few scattered clouds, creating a serene and peaceful atmosphere. The pathway seems to lead further into the expansive field, inviting one to take a walk and enjoy the natural surroundings. This type of landscape is often found in parks, nature reserves, or rural areas.",
       },
     ],
+    temperature: 1,
+    max_tokens: 256,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
   });
   console.log(response.choices[0]);
 }
@@ -138,7 +150,7 @@ export default function IndexPage() {
                           <Button
                             size="sm"
                             endContent={<CameraIcon size={20} />}
-                            onClick={analyzeImage}
+                            onClick={callToOpenAI}
                           ></Button>
                         }
                       />
