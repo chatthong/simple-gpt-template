@@ -199,6 +199,7 @@ export default function IndexPage() {
                           <Button
                             size="sm"
                             endContent={<CameraIcon size={20} />}
+                            className="pt-8 pb-8 mr-1"
                           ></Button>
                         }
                       />
