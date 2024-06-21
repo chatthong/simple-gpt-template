@@ -17,10 +17,16 @@ import {
 
 import { siteConfig } from "@/config/site";
 import { CameraIcon } from "@/components/icons";
-import { title, subtitle } from "@/components/primitives";
 import DefaultLayout from "@/layouts/default";
 
-const initialMessages = [
+// Define the correct type for the messages
+interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+  name?: string;
+}
+
+const initialMessages: ChatMessage[] = [
   { role: "system", content: process.env.MASTER_PROMPT || "System prompt" },
   { role: "user", content: "สวัสดีครับ" },
   {
@@ -48,7 +54,9 @@ const initialChats = [{ id: 1, messages: initialMessages }];
 
 export default function IndexPage() {
   const [textareaContent, setTextareaContent] = useState<string>("");
-  const [chatMessages, setChatMessages] = useState(initialMessages);
+  const [chatMessages, setChatMessages] =
+    useState<ChatMessage[]>(initialMessages);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Prevent newline in textarea
@@ -59,17 +67,28 @@ export default function IndexPage() {
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTextareaContent(e.target.value);
   };
+
+  const handleInputChange = (e: unknown) => {
+    const event = e as React.ChangeEvent<HTMLTextAreaElement>;
+    handleTextareaChange(event);
+  };
+
+  const handleInputKeyDown = (e: unknown) => {
+    const event = e as React.KeyboardEvent<HTMLTextAreaElement>;
+    handleKeyDown(event);
+  };
+
   const [chats, setChats] = useState(initialChats);
   const [description, setDescription] = useState("");
 
   async function callToOpenAI() {
-    const userMessage = { role: "user", content: textareaContent };
+    const userMessage: ChatMessage = { role: "user", content: textareaContent };
     const updatedMessages = [...chatMessages, userMessage];
     setChatMessages(updatedMessages);
     setTextareaContent(""); // Clear the textarea
     const response = await openai.chat.completions.create({
       model: "gpt-4",
-      messages: [...initialMessages, ...updatedMessages],
+      messages: updatedMessages, // No need to concatenate initialMessages again
       temperature: 1,
       max_tokens: 256,
       top_p: 1,
@@ -77,17 +96,21 @@ export default function IndexPage() {
       presence_penalty: 0,
     });
     console.log(response.choices[0]);
-    const assistantMessage = response.choices[0].message;
+    const assistantMessage: ChatMessage = {
+      role: "assistant",
+      content: response.choices[0].message.content ?? "", // Provide a default value if null
+    };
     setChatMessages((prevMessages) => [...prevMessages, assistantMessage]);
   }
 
   const handleAddTab = () => {
     const newChat = {
       id: chats.length + 1,
-      messages: [{ role: "user", content: "New chat started" }],
+      messages: [{ role: "user", content: "New chat started" } as ChatMessage],
     };
     setChats([...chats, newChat]);
   };
+
   return (
     <DefaultLayout>
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
@@ -154,8 +177,8 @@ export default function IndexPage() {
                     <CardFooter>
                       <Textarea
                         placeholder="Type your message here"
-                        onChange={handleTextareaChange}
-                        onKeyDown={handleKeyDown}
+                        onChange={handleInputChange}
+                        onKeyDown={handleInputKeyDown}
                         className="flex"
                         value={textareaContent}
                         endContent={
