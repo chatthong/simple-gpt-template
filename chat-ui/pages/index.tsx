@@ -191,7 +191,7 @@ export default function IndexPage() {
                               }
                             />
 
-                            <p className="max-w-[330px] ml-2 text-small relative rounded-medium bg-content2 px-4 py-3 text-default-600">
+                            <p className="max-w-[280px] ml-2 text-small relative rounded-medium bg-content2 px-4 py-3 text-default-600">
                               {isValidURL(message.content) ? (
                                 <Image
                                   isBlurred
@@ -245,7 +245,7 @@ export default function IndexPage() {
                 </small>
               </CardBody>
             </Card>
-            <Card className="max-w-[400px]">
+            <Card className="max-w-[350px]">
               <CardBody>
                 <small className="text-default-500">
                   รอเพิ่ม: Style การตอบยังปรับไม่ได้ หากต้องการปรับ
