@@ -151,7 +151,7 @@ export default function IndexPage() {
           <div className="flex w-full flex-col">
             <Tabs
               aria-label="Options"
-              placement="start"
+              placement="top"
               selectedKey={String(activeChatId)}
               onSelectionChange={(key) => setActiveChatId(Number(key))}
             >
@@ -159,13 +159,16 @@ export default function IndexPage() {
                 <Tab key={String(chat.id)} title={`Chat #${chat.id}`}>
                   <Card className="w-[400px] flex">
                     <CardHeader className="flex gap-3">
-                      <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:justify-between">
+                      <div className="flex w-full flex-wrap items-center gap-2 justify-between">
                         <p className="text-md">WhaleGPT</p>
                         <div className="inline-flex justify-center gap-4">
-                          <Tabs radius="full" aria-label="Tabs radius">
-                            <Tab key="creative" title="Creative" />
-                            <Tab key="formal" title="Formal" />
-                          </Tabs>
+                          <Button
+                            radius="full"
+                            key="newchat"
+                            onClick={handleAddTab}
+                          >
+                            + new chat
+                          </Button>
                           <ThemeSwitch />
                         </div>
                       </div>
@@ -212,10 +215,7 @@ export default function IndexPage() {
                         onKeyDown={handleInputKeyDown}
                         value={textareaContent}
                         endContent={
-                          <Kbd
-                            className="hidden lg:inline-block"
-                            keys={["enter"]}
-                          >
+                          <Kbd className="inline-block" keys={["enter"]}>
                             Enter
                           </Kbd>
                         }
@@ -234,20 +234,9 @@ export default function IndexPage() {
               ))}
             </Tabs>
           </div>
-          <div className="flex mt-2">
-            <Button
-              isIconOnly
-              radius="full"
-              key="newchat"
-              onClick={handleAddTab}
-              size="sm"
-            >
-              +
-            </Button>
-          </div>
 
           <div className="flex flex-col gap-4 mt-20  items-center justify-center ">
-            <Card className="max-w-[500px]">
+            <Card className="max-w-[400px]">
               <CardBody>
                 <small className="text-default-500">
                   รอเพิ่ม: สามารถตอบปัญหา จากรูปภาพได้ แต่ยัง upload ไม่ได้,
@@ -256,7 +245,7 @@ export default function IndexPage() {
                 </small>
               </CardBody>
             </Card>
-            <Card className="max-w-[500px]">
+            <Card className="max-w-[400px]">
               <CardBody>
                 <small className="text-default-500">
                   รอเพิ่ม: Style การตอบยังปรับไม่ได้ หากต้องการปรับ
