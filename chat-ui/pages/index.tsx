@@ -157,7 +157,7 @@ export default function IndexPage() {
             >
               {chats.map((chat) => (
                 <Tab key={String(chat.id)} title={`Chat #${chat.id}`}>
-                  <Card className="w-[400px] flex">
+                  <Card className="w-[350px] flex">
                     <CardHeader className="flex gap-3">
                       <div className="flex w-full flex-wrap items-center gap-2 justify-between">
                         <p className="text-md">WhaleGPT</p>
@@ -236,7 +236,7 @@ export default function IndexPage() {
           </div>
 
           <div className="flex flex-col gap-4 mt-20  items-center justify-center ">
-            <Card className="max-w-[400px]">
+            <Card className="max-w-[350px]">
               <CardBody>
                 <small className="text-default-500">
                   รอเพิ่ม: สามารถตอบปัญหา จากรูปภาพได้ แต่ยัง upload ไม่ได้,
