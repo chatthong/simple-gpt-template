@@ -13,8 +13,9 @@ import {
   CardFooter,
   Divider,
   Image,
-  Code,
+  ScrollShadow,
 } from "@nextui-org/react";
+import { ThemeSwitch } from "@/components/theme-switch";
 
 import { siteConfig } from "@/config/site";
 import { CameraIcon } from "@/components/icons";
@@ -74,7 +75,7 @@ export default function IndexPage() {
       e.preventDefault(); // Prevent newline in textarea
       if (textareaContent.trim() === "") {
         setIsInvalid(true);
-        setTimeout(() => setIsInvalid(false), 3000); // Reset isInvalid after 3 seconds
+        setTimeout(() => setIsInvalid(false), 300); // Reset isInvalid after 0.3 seconds
       } else {
         callToOpenAI();
       }
@@ -156,15 +157,16 @@ export default function IndexPage() {
             >
               {chats.map((chat) => (
                 <Tab key={String(chat.id)} title={`Chat #${chat.id}`}>
-                  <Card className="w-[600px] flex">
+                  <Card className="w-[400px] flex">
                     <CardHeader className="flex gap-3">
                       <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:justify-between">
                         <p className="text-md">WhaleGPT</p>
-                        <div className="inline-flex justify-center">
+                        <div className="inline-flex justify-center gap-4">
                           <Tabs radius="full" aria-label="Tabs radius">
-                            <Tab key="Creative" title="Creative" />
-                            <Tab key="Formal" title="Formal" />
+                            <Tab key="creative" title="Creative" />
+                            <Tab key="formal" title="Formal" />
                           </Tabs>
+                          <ThemeSwitch />
                         </div>
                       </div>
                     </CardHeader>
@@ -186,7 +188,7 @@ export default function IndexPage() {
                               }
                             />
 
-                            <p className="max-w-[530px] ml-2 text-small relative rounded-medium bg-content2 px-4 py-3 text-default-600">
+                            <p className="max-w-[330px] ml-2 text-small relative rounded-medium bg-content2 px-4 py-3 text-default-600">
                               {isValidURL(message.content) ? (
                                 <Image
                                   isBlurred
@@ -242,6 +244,27 @@ export default function IndexPage() {
             >
               +
             </Button>
+          </div>
+
+          <div className="flex flex-col gap-4 mt-20  items-center justify-center ">
+            <Card className="max-w-[500px]">
+              <CardBody>
+                <small className="text-default-500">
+                  รอเพิ่ม: สามารถตอบปัญหา จากรูปภาพได้ แต่ยัง upload ไม่ได้,
+                  ให้วาง URL รูปลงในช่องแชท แล้ว Enter,
+                  แล้วค่อยถามคำถามต่อจากนั้นเป็นข้อความถัดไป
+                </small>
+              </CardBody>
+            </Card>
+            <Card className="max-w-[500px]">
+              <CardBody>
+                <small className="text-default-500">
+                  รอเพิ่ม: Style การตอบยังปรับไม่ได้ หากต้องการปรับ
+                  ให้พิมพ์บอกวิธีการตอบเลย เช่น ให้ตอบสุภาพ
+                  แล้วตามด้วยคำถามในข้อความเดียวกัน แล้ว Enter
+                </small>
+              </CardBody>
+            </Card>
           </div>
         </div>
       </section>
